@@ -1,0 +1,71 @@
+<nav class="modern-navbar navbar navbar-expand">
+    <div class="container-fluid px-4">
+        <!-- Drawer toggle button - só aparece se estiver logado -->
+        <button class="btn btn-icon drawer-toggle" id="drawerToggle" (click)="toggleSidebar()" *ngIf="isAuthenticated$ | async">
+            <i class="material-icons">menu</i>
+        </button>
+        
+        <!-- Navbar brand-->
+        <a class="navbar-brand" href="index.html">
+            <div class="brand-content">
+                <div class="brand-icon-container">
+                    <i class="material-icons brand-icon">account_balance_wallet</i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="brand-text-container">
+                    <div class="brand-text">Finansys</div>
+                    <div class="brand-subtitle">Gestão Financeira</div>
+                </div>
+            </div>
+        </a>
+        
+        <!-- Navbar items - alinhados à esquerda após a marca -->
+        <div class="navbar-nav-left d-none d-lg-flex" *ngIf="isAuthenticated$ | async">
+            <ul class="navbar-nav">
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="/reports">
+                        <i class="material-icons">analytics</i>
+                        <span>Relatórios</span>
+                    </a>
+                </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="/entries">
+                        <i class="material-icons">receipt</i>
+                        <span>Lançamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="/categories">
+                        <i class="material-icons">category</i>
+                        <span>Categorias</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- User section -->
+        <div class="user-section" *ngIf="isAuthenticated$ | async">
+            <!-- User greeting -->
+            <div class="user-greeting" *ngIf="currentUser$ | async as user">
+                <span>Olá, {{ (user.name?.split(' ') || [])[0] || 'Usuário' }}!</span>
+            </div>
+
+            <!-- Logout button -->
+            <button
+                class="btn btn-logout"
+                (click)="onLogout()"
+                title="Sair do sistema">
+                <i class="material-icons">logout</i>
+                <span class="d-none d-lg-inline">Sair</span>
+            </button>
+        </div>
+        
+        <!-- Login button for non-authenticated users -->
+        <div class="auth-section" *ngIf="!(isAuthenticated$ | async)">
+            <a class="btn btn-primary btn-login" routerLink="/auth/login">
+                <i class="material-icons">login</i>
+                <span>Entrar</span>
+            </a>
+        </div>
+    </div>
+</nav>

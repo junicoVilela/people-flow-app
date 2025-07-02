@@ -1,0 +1,8 @@
+{
+  "_comment": "Proxy desabilitado para usar angular-in-memory-web-api",
+  "_disabled_api": {
+    "target": "http://10.10.10.241:8090",
+    "secure": false,
+    "logLevel": "debug"
+  }
+} 

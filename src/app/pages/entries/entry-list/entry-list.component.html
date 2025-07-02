@@ -1,0 +1,214 @@
+<app-bread-crumb
+        [items]="[{text: 'Lançamentos'}]"
+></app-bread-crumb>
+
+<app-page-header
+        page-title="Lançamentos"
+        button-text="Novo Lançamento"
+        button-link="new"
+        button-class="btn-primary"
+        [subtitle]="pageSubtitle"
+></app-page-header>
+
+<!-- Cards de Estatísticas -->
+<app-statistics-cards [cards]="statisticsCards"></app-statistics-cards>
+
+<!-- Loading State -->
+<app-page-loading *ngIf="isLoading" [config]="loadingConfig"></app-page-loading>
+
+<!-- Empty State -->
+<app-empty-state *ngIf="!isLoading && !hasResources()" [config]="emptyStateConfig"></app-empty-state>
+
+<!-- Lista de Lançamentos -->
+<div *ngIf="!isLoading && hasResources()">
+  <!-- Filtros e Controles -->
+  <app-resource-filters
+    [config]="{
+      enableSearch: enableSearch,
+      enableViewModeToggle: enableViewModeToggle,
+      enableItemsPerPage: enableItemsPerPage,
+      searchPlaceholder: searchPlaceholder,
+      itemsPerPageOptions: paginationOptions.itemsPerPageOptions
+    }"
+    [searchTerm]="searchTerm"
+    [itemsPerPage]="itemsPerPage"
+    [viewMode]="viewMode"
+    (searchChange)="searchTerm = $event; filterResources()"
+    (itemsPerPageChange)="onItemsPerPageChange($event)"
+    (viewModeChange)="setViewMode($event)">
+  </app-resource-filters>
+
+  <!-- Visualização em Grid -->
+  <div *ngIf="viewMode === 'grid'" class="row">
+    <div 
+      *ngFor="let entry of paginatedResources" 
+      class="col-lg-4 col-md-6 mb-4"
+    >
+      <div class="card border-0 shadow-sm h-100 entry-card">
+        <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="bg-gradient rounded-circle d-flex align-items-center justify-content-center me-2" 
+                 [class]="entry.type === 'revenue' ? 'bg-success' : 'bg-danger'"
+                 style="width: 40px; height: 40px;">
+              <i class="bi text-white" [class]="entry.type === 'revenue' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+            </div>
+            <span class="badge" [ngClass]="entry.paid ? 'bg-success' : 'bg-warning'">
+              {{ entry.paid ? 'Pago' : 'Pendente' }}
+            </span>
+          </div>
+          <div class="btn-group btn-group-sm">
+            <button 
+              class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+              [routerLink]="[entry.id, 'edit']"
+              title="Editar lançamento"
+              style="width: 35px; height: 35px;"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button 
+              class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
+              (click)="openDeleteModal(entry)"
+              title="Excluir lançamento"
+              style="width: 35px; height: 35px;"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title fw-bold text-dark mb-2">{{ entry.name }}</h5>
+          <p class="card-text text-muted mb-3" *ngIf="entry.description">
+            {{ entry.description }}
+          </p>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted small">
+              <i class="bi bi-calendar me-1"></i>
+              {{ entry.date | dateFormat }}
+            </span>
+            <span class="text-muted small">
+              <i class="bi bi-tag me-1"></i>
+              {{ entry.category?.name || 'Sem categoria' }}
+            </span>
+          </div>
+          <div class="text-end">
+            <h4 class="fw-bold mb-0" 
+                [class.text-success]="entry.type === 'revenue'"
+                [class.text-danger]="entry.type === 'expense'">
+              {{ entry.amount | currency:'BRL' }}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualização em Lista -->
+  <div *ngIf="viewMode === 'list'" class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="border-0">
+              <i class="bi bi-cash-stack me-2"></i>
+              Lançamento
+            </th>
+            <th scope="col" class="border-0">
+              <i class="bi bi-tag me-2"></i>
+              Categoria
+            </th>
+            <th scope="col" class="border-0 text-center">
+              <i class="bi bi-calendar me-2"></i>
+              Data
+            </th>
+            <th scope="col" class="border-0 text-end">
+              <i class="bi bi-currency-dollar me-2"></i>
+              Valor
+            </th>
+            <th scope="col" class="border-0 text-center">
+              <i class="bi bi-gear me-2"></i>
+              Ações
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of paginatedResources" class="align-middle">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3" 
+                     [class]="entry.type === 'revenue' ? 'bg-success' : 'bg-danger'"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi text-white" [class]="entry.type === 'revenue' ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                </div>
+                <div>
+                  <strong class="text-dark">{{ entry.name }}</strong>
+                  <div class="text-muted small" *ngIf="entry.description">
+                    {{ entry.description }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-muted">{{ entry.category?.name || 'Sem categoria' }}</span>
+            </td>
+            <td class="text-center">
+              <span class="text-muted">{{ entry.date | dateFormat }}</span>
+            </td>
+            <td class="text-end">
+              <div>
+                <strong
+                  [class.text-success]="entry.type === 'revenue'"
+                  [class.text-danger]="entry.type === 'expense'">
+                  {{ entry.amount | currency:'BRL' }}
+                </strong>
+              </div>
+              <span 
+                class="badge"
+                [ngClass]="entry.paid ? 'bg-success' : 'bg-warning'">
+                {{ entry.paid ? 'Pago' : 'Pendente' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm">
+                <button 
+                  class="btn btn-outline-primary"
+                  [routerLink]="[entry.id, 'edit']"
+                  title="Editar lançamento"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-danger"
+                  (click)="openDeleteModal(entry)"
+                  title="Excluir lançamento"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Componente de Paginação Reutilizável -->
+<app-pagination
+  *ngIf="!isLoading && hasResources() && totalPages > 1"
+  [data]="paginationData"
+  [options]="paginationOptions"
+  (pageChange)="onPageChange($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)"
+></app-pagination>
+
+<!-- Modal de Confirmação de Exclusão Reutilizável -->
+<app-confirm-delete-modal
+  modalId="deleteModal"
+  [data]="modalData"
+  [isDeleting]="isDeleting"
+  [itemType]="deleteModalConfig.itemType"
+  [deleteButtonText]="deleteModalConfig.deleteButtonText"
+  [cancelButtonText]="deleteModalConfig.cancelButtonText"
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()"
+></app-confirm-delete-modal>

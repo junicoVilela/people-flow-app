@@ -1,0 +1,27 @@
+<div class="bg-white border-0 rounded-4 p-4 mb-4 shadow-sm">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center mb-2">
+        <div class="bg-primary bg-gradient rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+          <i class="bi bi-collection text-white fs-3"></i>
+        </div>
+        <div>
+          <h1 class="display-6 fw-bold text-dark mb-1">{{ pageTitle }}</h1>
+          <p class="text-muted mb-0">
+            {{ subtitle }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 text-lg-end" *ngIf="showButton">
+      <a 
+        [routerLink]="buttonLink" 
+        class="btn shadow-sm px-4"
+        [ngClass]="buttonClass"
+      >
+        <i class="bi bi-plus-circle me-2"></i>
+        {{ buttonText }}
+      </a>
+    </div>
+  </div>
+</div>
