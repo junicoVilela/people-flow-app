@@ -86,8 +86,6 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
             });
         }
 
-        // Deixa o ErrorInterceptor lidar com a maioria dos erros
-        // Mas ainda registra para debugging se necessário
         return throwError(() => error);
     }
 }

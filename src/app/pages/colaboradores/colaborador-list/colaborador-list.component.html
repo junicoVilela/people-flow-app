@@ -1,0 +1,209 @@
+<app-bread-crumb
+        [items]="[{text: 'Colaboradores'}]"
+></app-bread-crumb>
+
+<app-page-header
+    page-title="Colaboradores"
+    button-text="Novo Colaborador"
+    button-link="new"
+    button-class="btn-primary"
+    [subtitle]="pageSubtitle"
+></app-page-header>
+
+<!-- Cards de Estatísticas -->
+<app-statistics-cards [cards]="statisticsCards"></app-statistics-cards>
+
+<!-- Loading State -->
+<app-page-loading *ngIf="isLoading" [config]="loadingConfig"></app-page-loading>
+
+<!-- Empty State -->
+<app-empty-state *ngIf="!isLoading && !hasResources()" [config]="emptyStateConfig"></app-empty-state>
+
+<!-- Lista de Colaboradores -->
+<div *ngIf="!isLoading && hasResources()">
+  <!-- Filtros e Controles -->
+  <app-resource-filters
+    [config]="{
+      enableSearch: enableSearch,
+      searchPlaceholder: searchPlaceholder,
+      enableViewModeToggle: enableViewModeToggle,
+      enableItemsPerPage: enableItemsPerPage,
+      itemsPerPageOptions: [5, 10, 20, 50]
+    }"
+    [searchTerm]="searchTerm"
+    [itemsPerPage]="itemsPerPage"
+    [viewMode]="viewMode"
+    (searchChange)="searchTerm = $event; filterResources()"
+    (viewModeChange)="setViewMode($event)"
+    (itemsPerPageChange)="onItemsPerPageChange($event)">
+  </app-resource-filters>
+
+  <!-- Visualização em Grid -->
+  <div *ngIf="viewMode === 'grid'" class="row">
+    <div *ngFor="let colaborador of paginatedResources" class="col-lg-4 col-md-6 mb-4">
+      <div class="card border-0 shadow-sm h-100 colaborador-card">
+        <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center me-2"
+                 style="width: 40px; height: 40px;">
+              <i class="bi bi-person text-white fs-4"></i>
+            </div>
+          </div>
+          <div class="btn-group btn-group-sm">
+                          <button 
+                class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+                [routerLink]="[colaborador.id, 'edit']"
+                title="Editar colaborador"
+                style="width: 35px; height: 35px;"
+              >
+                <i class="bi bi-pencil"></i>
+              </button>
+            <button 
+              class="btn btn-outline-warning rounded-circle d-flex align-items-center justify-content-center"
+              *ngIf="colaborador.status === 'ATIVO'"
+              (click)="inativarColaborador(colaborador)"
+              title="Inativar colaborador"
+              style="width: 35px; height: 35px;"
+            >
+              <i class="bi bi-person-x"></i>
+            </button>
+            <button 
+              class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
+              (click)="deleteResource(colaborador)"
+              title="Excluir colaborador"
+              style="width: 35px; height: 35px;"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title fw-bold text-dark mb-2">{{ colaborador.nome }}</h5>
+          <p class="card-text text-muted mb-2">{{ colaborador.email }}</p>
+          <p class="card-text text-muted mb-2">{{ colaborador.cargo }} - {{ colaborador.departamento }}</p>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge" 
+                  [ngClass]="colaborador.status === 'ATIVO' ? 'bg-success' : 'bg-danger'">
+              {{ colaborador.status }}
+            </span>
+            <span class="text-muted small">
+              <i class="bi bi-calendar me-1"></i>
+              {{ formatResourceDate(colaborador.dataAdmissao) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualização em Lista -->
+  <div *ngIf="viewMode === 'list'" class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="border-0">
+              <i class="bi bi-person me-2"></i>
+              Colaborador
+            </th>
+            <th scope="col" class="border-0">
+              <i class="bi bi-envelope me-2"></i>
+              Email
+            </th>
+            <th scope="col" class="border-0">
+              <i class="bi bi-briefcase me-2"></i>
+              Cargo/Departamento
+            </th>
+            <th scope="col" class="border-0 text-center">
+              <i class="bi bi-calendar me-2"></i>
+              Data de Admissão
+            </th>
+            <th scope="col" class="border-0 text-center">
+              <i class="bi bi-gear me-2"></i>
+              Ações
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let colaborador of paginatedResources" class="align-middle">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center me-3"
+                     style="width: 40px; height: 40px;">
+                  <i class="bi bi-person text-white fs-4"></i>
+                </div>
+                <div>
+                  <strong class="text-dark">{{ colaborador.nome }}</strong>
+                  <br>
+                  <small class="text-muted">{{ colaborador.cpf }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-muted">{{ colaborador.email }}</span>
+            </td>
+            <td>
+              <span class="text-muted">{{ colaborador.cargo }}</span>
+              <br>
+              <small class="text-muted">{{ colaborador.departamento }}</small>
+            </td>
+            <td class="text-center">
+              <span class="text-muted">{{ formatResourceDate(colaborador.dataAdmissao) }}</span>
+              <br>
+              <span class="badge" 
+                    [ngClass]="colaborador.status === 'ATIVO' ? 'bg-success' : 'bg-danger'">
+                {{ colaborador.status }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm">
+                <button 
+                  class="btn btn-outline-primary"
+                  [routerLink]="[colaborador.id, 'edit']"
+                  title="Editar colaborador"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-warning"
+                  *ngIf="colaborador.status === 'ATIVO'"
+                  (click)="inativarColaborador(colaborador)"
+                  title="Inativar colaborador"
+                >
+                  <i class="bi bi-person-x"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-danger"
+                  (click)="deleteResource(colaborador)"
+                  title="Excluir colaborador"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Paginação -->
+<app-pagination 
+  *ngIf="!isLoading && hasResources() && totalPages > 1"
+  [data]="paginationData"
+  [options]="paginationOptions"
+  (pageChange)="onPageChange($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)">
+</app-pagination>
+
+<!-- Modal de Confirmação de Exclusão -->
+<app-confirm-delete-modal
+  [data]="modalData"
+  [isDeleting]="isDeleting"
+  [itemType]="deleteModalConfig.itemType"
+  [deleteButtonText]="deleteModalConfig.deleteButtonText"
+  [cancelButtonText]="deleteModalConfig.cancelButtonText"
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()">
+</app-confirm-delete-modal> 

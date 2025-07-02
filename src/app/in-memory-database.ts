@@ -1,6 +1,7 @@
 import { InMemoryDbService } from "angular-in-memory-web-api";
 import { Category } from "./pages/categories/shared/category.model";
 import { Entry } from "./pages/entries/shared/entry.model";
+import { Colaborador } from "./pages/colaboradores/shared/colaborador.model";
 
 export class InMemoryDatabase implements InMemoryDbService {
     createDb() {
@@ -99,7 +100,106 @@ export class InMemoryDatabase implements InMemoryDbService {
             }
         ];
 
-        return { categories, entries, users };
+        const colaboradores: Colaborador[] = [
+            {
+                id: 1,
+                nome: "João Silva Santos",
+                email: "joao.silva@empresa.com",
+                cpf: "12345678901",
+                rg: "12345678",
+                dataNascimento: new Date("1990-05-15"),
+                sexo: "M",
+                telefone: "11987654321",
+                estadoCivil: "Casado",
+                endereco: "Rua das Flores, 123 - São Paulo/SP",
+                cargo: "Desenvolvedor Full Stack",
+                departamento: "TI",
+                salario: 8500.00,
+                dataAdmissao: new Date("2022-03-01"),
+                status: "ATIVO",
+                dataCriacao: new Date("2022-03-01T10:00:00Z"),
+                dataAtualizacao: new Date("2024-01-15T14:30:00Z")
+            },
+            {
+                id: 2,
+                nome: "Maria Oliveira Costa",
+                email: "maria.oliveira@empresa.com",
+                cpf: "98765432109",
+                rg: "87654321",
+                dataNascimento: new Date("1988-12-20"),
+                sexo: "F",
+                telefone: "11912345678",
+                estadoCivil: "Solteira",
+                endereco: "Av. Paulista, 1000 - São Paulo/SP",
+                cargo: "Analista de RH",
+                departamento: "Recursos Humanos",
+                salario: 6500.00,
+                dataAdmissao: new Date("2021-08-15"),
+                status: "ATIVO",
+                dataCriacao: new Date("2021-08-15T09:00:00Z"),
+                dataAtualizacao: new Date("2024-01-10T16:45:00Z")
+            },
+            {
+                id: 3,
+                nome: "Carlos Eduardo Ferreira",
+                email: "carlos.ferreira@empresa.com",
+                cpf: "45678912345",
+                rg: "45678912",
+                dataNascimento: new Date("1995-07-10"),
+                sexo: "M",
+                telefone: "11955556666",
+                estadoCivil: "Casado",
+                endereco: "Rua Augusta, 500 - São Paulo/SP",
+                cargo: "Designer UX/UI",
+                departamento: "Design",
+                salario: 7200.00,
+                dataAdmissao: new Date("2023-01-10"),
+                status: "ATIVO",
+                dataCriacao: new Date("2023-01-10T11:30:00Z"),
+                dataAtualizacao: new Date("2024-01-20T13:15:00Z")
+            },
+            {
+                id: 4,
+                nome: "Ana Paula Rodrigues",
+                email: "ana.rodrigues@empresa.com",
+                cpf: "78912345678",
+                rg: "78912345",
+                dataNascimento: new Date("1992-03-25"),
+                sexo: "F",
+                telefone: "11977778888",
+                estadoCivil: "Divorciada",
+                endereco: "Rua Oscar Freire, 200 - São Paulo/SP",
+                cargo: "Gerente de Marketing",
+                departamento: "Marketing",
+                salario: 9500.00,
+                dataAdmissao: new Date("2020-06-01"),
+                dataDemissao: new Date("2024-01-15"),
+                status: "INATIVO",
+                dataCriacao: new Date("2020-06-01T08:00:00Z"),
+                dataAtualizacao: new Date("2024-01-15T17:00:00Z")
+            },
+            {
+                id: 5,
+                nome: "Roberto Almeida Lima",
+                email: "roberto.almeida@empresa.com",
+                cpf: "32165498765",
+                rg: "32165498",
+                dataNascimento: new Date("1985-11-08"),
+                sexo: "M",
+                telefone: "11999990000",
+                estadoCivil: "Casado",
+                endereco: "Rua Haddock Lobo, 1500 - São Paulo/SP",
+                cargo: "Analista Financeiro",
+                departamento: "Financeiro",
+                salario: 7800.00,
+                dataAdmissao: new Date("2022-09-01"),
+                status: "ATIVO",
+                dataCriacao: new Date("2022-09-01T14:00:00Z"),
+                dataAtualizacao: new Date("2024-01-18T10:20:00Z")
+            }
+        ];
+
+        return { categories, entries, users, colaboradores };
     }
 
     // Intercepta requisições de autenticação

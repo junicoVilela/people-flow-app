@@ -17,6 +17,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'colaboradores',
+    loadChildren: () => import('./pages/colaboradores/colaboradores-routes').then(m => m.COLABORADORES_ROUTES),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'reports',
     loadChildren: () => import('./pages/reports/reports-routes').then(m => m.REPORTS_ROUTES),
     canActivate: [AuthGuard]

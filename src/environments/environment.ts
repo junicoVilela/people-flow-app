@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'api',
+  apiUrl: 'http://localhost:8080/api',
   enableLogs: true,
   version: '1.0.0',
   enableDevTools: true,
   httpTimeout: 30000,
-  enableMockData: true
+  enableMockData: false
 };
 
 /*

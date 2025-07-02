@@ -243,6 +243,13 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel>
         return messages;
     }
 
+    get loadingConfig(): any {
+        return {
+            title: 'Salvando...',
+            description: 'Aguarde enquanto processamos os dados'
+        };
+    }
+
     private markFormGroupTouched() {
         Object.keys(this.resourceForm.controls).forEach(key => {
             const control = this.resourceForm.get(key);
