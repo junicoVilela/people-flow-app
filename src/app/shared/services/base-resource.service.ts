@@ -22,8 +22,22 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getAll(): Observable<T[]> {
         const url = `${environment.apiUrl}/${this.apiPath}`;
-        return this.http.get<any[]>(url).pipe(
-            map((jsonData: any[]) => this.jsonDataToResources(jsonData)),
+        return this.http.get<any>(url).pipe(
+            map((response: any) => {
+                // Verifica se a resposta é paginada
+                let jsonData: any[];
+                if (response && response.content && Array.isArray(response.content)) {
+                    // Resposta paginada
+                    jsonData = response.content;
+                } else if (Array.isArray(response)) {
+                    // Resposta direta (lista)
+                    jsonData = response;
+                } else {
+                    jsonData = [];
+                }
+                
+                return this.jsonDataToResources(jsonData);
+            }),
             catchError(this.handleError)
         );
     }

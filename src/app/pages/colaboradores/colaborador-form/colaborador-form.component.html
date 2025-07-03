@@ -50,14 +50,17 @@
                   <app-form-field-error [form-control]="$any(resourceForm.get('email'))"></app-form-field-error>
                 </div>
 
-                <div class="form-group" *ngIf="currentAction === 'new'">
-                  <label for="senha">Senha *</label>
+                <div class="form-group">
+                  <label for="senha">
+                    Senha 
+                    <span *ngIf="currentAction === 'new'">*</span>
+                  </label>
                   <input type="password" 
                          id="senha" 
                          class="form-control" 
                          formControlName="senha"
-                         placeholder="Digite a senha">
-                                    <app-form-field-error [form-control]="$any(resourceForm.get('senha'))"></app-form-field-error>
+                         [placeholder]="currentAction === 'new' ? 'Digite a senha' : 'Deixe em branco para manter a senha atual'">
+                  <app-form-field-error [form-control]="$any(resourceForm.get('senha'))"></app-form-field-error>
                 </div>
 
                 <div class="form-group">

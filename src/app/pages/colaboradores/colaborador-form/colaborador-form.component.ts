@@ -45,12 +45,32 @@ export class ColaboradorFormComponent extends BaseResourceFormComponent<Colabora
     super(injector, new Colaborador(), colaboradorService, Colaborador.fromJson);
   }
 
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.adjustPasswordValidation();
+  }
+
+  private adjustPasswordValidation(): void {
+    // Ajusta a validação da senha baseado no modo (criação ou edição)
+    const senhaControl = this.resourceForm.get('senha');
+    if (senhaControl) {
+      if (this.currentAction === 'new') {
+        // No modo criação, senha é obrigatória
+        senhaControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
+      } else {
+        // No modo edição, senha é opcional
+        senhaControl.setValidators([Validators.minLength(6), Validators.maxLength(20)]);
+      }
+      senhaControl.updateValueAndValidity();
+    }
+  }
+
   protected buildResourceForm() {
     this.resourceForm = this.formBuilder.group({
       id: [null],
       nome: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(150)]],
-      senha: [null, [Validators.required, Validators.minLength(6), Validators.maxLength(20)]],
+      senha: [null, [Validators.minLength(6), Validators.maxLength(20)]], // Removido Validators.required
       cpf: [null, [Validators.required, Validators.pattern(/^\d{11}$/)]],
       rg: [null, [Validators.maxLength(20)]],
       dataNascimento: [null, [Validators.required]],
