@@ -159,6 +159,20 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
       resource, 
       this.getResourceDisplayName.bind(this)
     );
+    
+    // Abrir modal Bootstrap após um pequeno delay para garantir que o DOM foi atualizado
+    setTimeout(() => {
+      const modal = document.getElementById('confirmDeleteModal');
+      
+      if (modal && (window as any).bootstrap) {
+        const bootstrapModal = new (window as any).bootstrap.Modal(modal);
+        bootstrapModal.show();
+      } else if (!(window as any).bootstrap) {
+        console.error('Bootstrap não está disponível');
+      } else {
+        console.error('Modal element não encontrado');
+      }
+    }, 100);
   }
 
   confirmDelete(): void {
@@ -240,7 +254,7 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     return this.statisticsConfig?.cards || [];
   }
 
-  private loadResources(): void {
+  protected loadResources(): void {
     this.isLoading = true;
     this.resourceService.getAll().subscribe({
       next: (resources) => {

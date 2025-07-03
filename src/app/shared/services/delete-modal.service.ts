@@ -55,18 +55,11 @@ export class DeleteModalService {
       icon: config.icon || 'bi-exclamation-triangle'
     };
 
-    // Abrir modal Bootstrap
-    const modal = document.getElementById('deleteModal');
-    if (modal) {
-      const bootstrapModal = new (window as any).bootstrap.Modal(modal);
-      bootstrapModal.show();
-    }
-
     return modalData;
   }
 
   closeModal(): void {
-    const modal = document.getElementById('deleteModal');
+    const modal = document.getElementById('confirmDeleteModal');
     if (modal) {
       const bootstrapModal = (window as any).bootstrap.Modal.getInstance(modal);
       if (bootstrapModal) {
