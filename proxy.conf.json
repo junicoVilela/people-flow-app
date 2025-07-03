@@ -1,5 +1,5 @@
 {
-  "_comment": "Proxy desabilitado para usar angular-in-memory-web-api",
+  "_comment": "Proxy configurado para redirecionar chamadas da API para o backend Spring Boot",
   "_disabled_api": {
     "target": "http://10.10.10.241:8090",
     "secure": false,

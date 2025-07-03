@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { map, catchError, delay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { User } from '../../shared/models/user.model';
 import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
   email: string;
-  password: string;
+  senha: string;
 }
 
 export interface RegisterRequest {
-  name: string;
+  nome: string;
   email: string;
-  password: string;
-  confirmPassword: string;
+  senha: string;
+  confirmarSenha: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -56,49 +56,65 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<any>(`${this.apiPath}/login`, request).pipe(
-      delay(1000), // Simula latência da rede
       map(response => {
-        if (response && response.user) {
-          const user = User.fromJson(response.user);
+        if (response && response.token) {
+          // Mapear a resposta do backend para o modelo User
+          const user = new User(
+            response.usuarioId,
+            response.nome,
+            response.email,
+            response.role,
+            response.token
+          );
+          
           const authResponse: AuthResponse = {
             user,
-            token: response.token || this.generateFakeToken(),
-            message: response.message || 'Login realizado com sucesso!'
+            token: response.token,
+            message: 'Login realizado com sucesso!'
           };
+          
           this.setAuth(authResponse);
           return authResponse;
         }
         throw new Error('Credenciais inválidas');
       }),
       catchError(error => {
-        console.error('Login error:', error);
-        return throwError(() => new Error('Email ou senha incorretos'));
+        if (error.status === 401) {
+          return throwError(() => new Error('Email ou senha incorretos'));
+        }
+        return throwError(() => new Error('Erro ao fazer login. Tente novamente.'));
       })
     );
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    if (request.password !== request.confirmPassword) {
+    if (request.senha !== request.confirmarSenha) {
       return throwError(() => new Error('As senhas não coincidem'));
     }
 
     return this.http.post<any>(`${this.apiPath}/register`, request).pipe(
-      delay(1000), // Simula latência da rede
       map(response => {
-        if (response && response.user) {
-          const user = User.fromJson(response.user);
+        if (response && response.token) {
+          const user = new User(
+            response.usuarioId,
+            response.nome,
+            response.email,
+            response.role,
+            response.token
+          );
+          
           const authResponse: AuthResponse = {
             user,
-            token: response.token || this.generateFakeToken(),
-            message: response.message || 'Cadastro realizado com sucesso!'
+            token: response.token,
+            message: 'Cadastro realizado com sucesso!'
           };
+          
           this.setAuth(authResponse);
           return authResponse;
         }
         throw new Error('Erro ao criar conta');
       }),
       catchError(error => {
-        console.error('Register error:', error);
         if (error.status === 409) {
           return throwError(() => new Error('Este email já está em uso'));
         }
@@ -109,12 +125,10 @@ export class AuthService {
 
   forgotPassword(request: ForgotPasswordRequest): Observable<{ message: string }> {
     return this.http.post<any>(`${this.apiPath}/forgot-password`, request).pipe(
-      delay(1000), // Simula latência da rede
       map(response => ({
         message: response.message || 'Instruções enviadas para seu email!'
       })),
       catchError(error => {
-        console.error('Forgot password error:', error);
         if (error.status === 404) {
           return throwError(() => new Error('Email não encontrado'));
         }
@@ -148,13 +162,9 @@ export class AuthService {
         this.currentUserSubject.next(user);
         this.isAuthenticatedSubject.next(true);
       } catch (error) {
-        console.error('Error loading stored auth:', error);
         this.logout();
       }
     }
   }
 
-  private generateFakeToken(): string {
-    return 'fake-jwt-token-' + Math.random().toString(36).substr(2, 9);
-  }
 } 

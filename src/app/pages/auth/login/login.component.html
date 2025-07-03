@@ -68,14 +68,14 @@
             <input
               id="password"
               type="password"
-              formControlName="password"
+              formControlName="senha"
               class="field-input"
-              [class.error]="f['password'].invalid && f['password'].touched"
+              [class.error]="f['senha'].invalid && f['senha'].touched"
               placeholder="Digite sua senha"
               autocomplete="current-password"
             />
           </div>
-          <app-form-field-error [form-control]="f['password']"></app-form-field-error>
+          <app-form-field-error [form-control]="f['senha']"></app-form-field-error>
         </div>
 
         <div class="form-options">
@@ -111,23 +111,7 @@
         </p>
       </div>
 
-      <!-- Demo credentials for development -->
-      <div class="demo-panel" *ngIf="true">
-        <div class="demo-header">
-          <i class="material-icons">info</i>
-          <span>Credenciais de Demonstração</span>
-        </div>
-        <div class="demo-credentials">
-          <div class="credential-item">
-            <span class="label">Email:</span>
-            <code>admin&#64;finansys.com</code>
-          </div>
-          <div class="credential-item">
-            <span class="label">Senha:</span>
-            <code>123456</code>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 </div> 

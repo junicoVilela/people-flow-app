@@ -47,7 +47,7 @@
         <div class="user-section" *ngIf="isAuthenticated$ | async">
             <!-- User greeting -->
             <div class="user-greeting" *ngIf="currentUser$ | async as user">
-                <span>Olá, {{ (user.name?.split(' ') || [])[0] || 'Usuário' }}!</span>
+                <span>Olá, {{ (user.nome?.split(' ') || [])[0] || 'Usuário' }}!</span>
             </div>
 
             <!-- Logout button -->

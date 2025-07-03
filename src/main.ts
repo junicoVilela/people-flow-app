@@ -7,14 +7,13 @@ import { AppComponent } from './app/app.component';
 import { PreloadAllModules, provideRouter, withPreloading } from "@angular/router";
 import { routes } from "./app/app-routing";
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { provideHttpClient, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ToastrModule } from "ngx-toastr";
 import { provideNgxMask } from "ngx-mask";
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDatabase } from './app/in-memory-database';
 
 import { ErrorInterceptor } from './app/core/interceptors/error.interceptor';
 import { LoadingInterceptor } from './app/core/interceptors/loading.interceptor';
+import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
 
 if (environment.production) {
   enableProdMode();
@@ -22,25 +21,11 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        // HttpClient deve vir primeiro
-        provideHttpClient(),
-        
-        // Depois os módulos importados
-        importProvidersFrom(
-            BrowserModule, 
-            ToastrModule.forRoot(),
-            HttpClientInMemoryWebApiModule.forRoot(InMemoryDatabase, { 
-                delay: 500,
-                passThruUnknownUrl: true,
-                dataEncapsulation: false
-            })
-        ),
-        
-        // Outros providers
-        provideNgxMask(),
-        provideAnimations(),
-        
-        // Interceptors
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: LoadingInterceptor,
@@ -52,7 +37,15 @@ bootstrapApplication(AppComponent, {
             multi: true
         },
         
-        // Router por último
+        importProvidersFrom(
+            BrowserModule,
+            HttpClientModule,
+            ToastrModule.forRoot()
+        ),
+        
+        provideNgxMask(),
+        provideAnimations(),
+        
         provideRouter(routes, withPreloading(PreloadAllModules))
     ]
 })
