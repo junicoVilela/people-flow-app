@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 export interface PaginationData {
   currentPage: number;
@@ -24,7 +25,7 @@ export interface PaginationOptions {
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, FormsModule]
 })
 export class PaginationComponent {
   @Input() data!: PaginationData;
@@ -74,12 +75,6 @@ export class PaginationComponent {
     const pages: number[] = [];
     const maxVisiblePages = 5;
     
-    console.log('Debug paginação:', {
-      currentPage: this.data.currentPage,
-      totalPages: this.data.totalPages,
-      totalItems: this.data.totalItems
-    });
-    
     if (this.data.totalPages <= maxVisiblePages) {
       // Mostrar todas as páginas se houver 5 ou menos
       for (let i = 1; i <= this.data.totalPages; i++) {
@@ -100,7 +95,6 @@ export class PaginationComponent {
       }
     }
     
-    console.log('Páginas geradas:', pages);
     return pages;
   }
 

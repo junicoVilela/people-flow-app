@@ -190,7 +190,7 @@
 
 <!-- Paginação -->
 <app-pagination 
-  *ngIf="!isLoading && hasResources() && totalPages > 1"
+  *ngIf="!isLoading && hasResources()"
   [data]="paginationData"
   [options]="paginationOptions"
   (pageChange)="onPageChange($event)"

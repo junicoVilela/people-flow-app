@@ -1,20 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PaginationOptions } from '../components/pagination/pagination.component';
-
-export interface PaginationConfig {
-  options: PaginationOptions;
-  defaultItemsPerPage: number;
-  enableItemsPerPage?: boolean;
-}
-
-export interface PaginationData {
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-  totalItems: number;
-  startItem: number;
-  endItem: number;
-}
+import { PaginationConfig, PaginationData } from '../models/pagination.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +7,14 @@ export interface PaginationData {
 export class PaginationService {
   
   private _currentPage: number = 1;
-  private _itemsPerPage: number = 10;
+  private _itemsPerPage: number;
   private _totalPages: number = 0;
   private _totalItems: number = 0;
+
+  constructor() {
+    const savedItemsPerPage = localStorage.getItem('itemsPerPage');
+    this._itemsPerPage = savedItemsPerPage ? parseInt(savedItemsPerPage, 10) : this.config.defaultItemsPerPage;
+  }
 
   get config(): PaginationConfig {
     return {
@@ -64,6 +54,8 @@ export class PaginationService {
   onItemsPerPageChange(itemsPerPage: number): void {
     this._itemsPerPage = itemsPerPage;
     this._currentPage = 1; // Voltar para a primeira página
+    // Salvar preferência no localStorage
+    localStorage.setItem('itemsPerPage', itemsPerPage.toString());
   }
 
   updatePagination<T>(resources: T[]): T[] {
@@ -92,7 +84,8 @@ export class PaginationService {
 
   reset(): void {
     this._currentPage = 1;
-    this._itemsPerPage = this.config.defaultItemsPerPage;
+    const savedItemsPerPage = localStorage.getItem('itemsPerPage');
+    this._itemsPerPage = savedItemsPerPage ? parseInt(savedItemsPerPage, 10) : this.config.defaultItemsPerPage;
     this._totalPages = 0;
     this._totalItems = 0;
   }

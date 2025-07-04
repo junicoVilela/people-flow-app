@@ -2,7 +2,8 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BaseResourceService } from '../../services/base-resource.service';
 import { BaseResourceModel } from '../../models/base-resource.model';
-import { PaginationService, PaginationData } from '../../services/pagination.service';
+import { PaginationService } from '../../services/pagination.service';
+import { PaginationData } from '../../models/pagination.model';
 import { SearchService } from '../../services/search.service';
 import { StatisticsService, StatisticsCard } from '../../services/statistics.service';
 import { DeleteModalService } from '../../services/delete-modal.service';
@@ -53,7 +54,6 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
   }
 
   protected initializeComponent(): void {
-    this.paginationService.reset();
     this.viewMode = this.viewModeConfig.defaultMode;
   }
 
