@@ -51,14 +51,11 @@ export class ColaboradorFormComponent extends BaseResourceFormComponent<Colabora
   }
 
   private adjustPasswordValidation(): void {
-    // Ajusta a validação da senha baseado no modo (criação ou edição)
     const senhaControl = this.resourceForm.get('senha');
     if (senhaControl) {
       if (this.currentAction === 'new') {
-        // No modo criação, senha é obrigatória
         senhaControl.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
       } else {
-        // No modo edição, senha é opcional
         senhaControl.setValidators([Validators.minLength(6), Validators.maxLength(20)]);
       }
       senhaControl.updateValueAndValidity();
