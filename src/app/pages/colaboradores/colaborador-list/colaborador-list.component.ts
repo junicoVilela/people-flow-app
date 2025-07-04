@@ -69,15 +69,6 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
     return 'bi-people';
   }
 
-  public formatResourceDate(date: any): string {
-    if (!date) return 'Data não disponível';
-    
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) return 'Data inválida';
-    
-    return dateObj.toLocaleDateString('pt-BR');
-  }
-
   protected getResourceDisplayName(colaborador: Colaborador): string {
     return colaborador.nome || 'Colaborador sem nome';
   }
@@ -185,5 +176,9 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         this.toastrService.error('Erro ao inativar colaborador!');
       }
     });
+  }
+
+  protected formatResourceDate(date: any): string {
+    return '';
   }
 } 
