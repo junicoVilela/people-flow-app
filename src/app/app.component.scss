@@ -1,28 +1,35 @@
-// Remove gutter (bordas laterais) do Bootstrap nas páginas de autenticação
-.content .row.auth-layout {
-  // Remove as margens laterais negativas do Bootstrap
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-  
-  // Remove padding lateral das colunas
-  .col-12 {
-    padding-right: 0 !important;
-    padding-left: 0 !important;
-  }
-}
-
 // Layout principal
 .content {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 5rem; // Adiciona padding para o navbar fixo
   
   .row {
     flex: 1;
     margin: 0;
-    min-height: calc(100vh - 5rem); // Altura total menos o navbar
-    margin-top: 0; // Remove margem top pois já está no padding do content
+    margin-top: 0;
+    
+    // Layout normal (com navbar)
+    &:not(.auth-layout) {
+      min-height: calc(100vh - 5rem);
+      padding-top: 5rem; // Adiciona padding para o navbar fixo
+    }
+    
+    // Layout de autenticação (sem navbar)
+    &.auth-layout {
+      min-height: 100vh;
+      padding-top: 0; // Remove padding nas páginas de auth
+      
+      // Remove margens laterais negativas do Bootstrap nas páginas de autenticação
+      margin-right: 0 !important;
+      margin-left: 0 !important;
+      
+      // Remove padding lateral das colunas
+      .col-12 {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+      }
+    }
   }
 }
 
@@ -74,8 +81,16 @@
 
 // Responsividade para dispositivos móveis
 @media (max-width: 767.98px) {
-  .content {
-    padding-top: 4.5rem; // Ajusta para altura menor do navbar no mobile
+  .content .row {
+    // Layout normal (com navbar) no mobile
+    &:not(.auth-layout) {
+      padding-top: 4.5rem; // Ajusta para altura menor do navbar no mobile
+    }
+    
+    // Layout de autenticação mantém padding 0 no mobile
+    &.auth-layout {
+      padding-top: 0;
+    }
   }
   
   .sidebar-container {
@@ -120,7 +135,7 @@
 
 // Melhorias visuais para o layout
 .content-container {
-  // Adiciona um padding interno para o conteúdo
+  // Adiciona um padding interno para o conteúdo apenas em páginas não-auth
   .router-outlet {
     padding: 2rem;
   }
@@ -130,4 +145,13 @@
     display: block;
     height: 100%;
   }
+}
+
+// Remove padding do content-container em layouts de autenticação
+.auth-layout .content-container {
+  .router-outlet {
+    padding: 0 !important;
+  }
+  
+  background: transparent !important;
 }

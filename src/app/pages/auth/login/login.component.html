@@ -1,28 +1,47 @@
 <div class="auth-container">
-  <!-- Left Panel - Brand & Info -->
+  <!-- Left Panel - HR Brand & Features -->
   <div class="auth-brand-panel">
     <div class="brand-content">
       <div class="company-logo">
-        <i class="material-icons logo-icon">trending_up</i>
-        <h1 class="company-name">Finansys</h1>
+        <i class="material-icons logo-icon">people_alt</i>
+        <h1 class="company-name">People Flow</h1>
       </div>
       
       <div class="brand-message">
-        <h2>Gestão Financeira Inteligente</h2>
-        <p>Controle suas finanças com precisão e eficiência. Relatórios detalhados, categorização inteligente e insights que impulsionam seu crescimento.</p>
+        <h2>Gestão de Pessoas Inteligente</h2>
+        <p>Transforme a gestão de RH da sua empresa. Automatize processos, gerencie colaboradores e tome decisões baseadas em dados para impulsionar o crescimento.</p>
         
         <div class="features-list">
           <div class="feature-item">
-            <i class="material-icons">analytics</i>
-            <span>Relatórios Avançados</span>
+            <i class="material-icons">group</i>
+            <div class="feature-text">
+              <span class="feature-title">Colaboradores</span>
+              <span class="feature-desc">Gestão completa de pessoas</span>
+            </div>
           </div>
+          
           <div class="feature-item">
-            <i class="material-icons">category</i>
-            <span>Categorização Automática</span>
+            <i class="material-icons">schedule</i>
+            <div class="feature-text">
+              <span class="feature-title">Controle de Ponto</span>
+              <span class="feature-desc">Registro automático de horas</span>
+            </div>
           </div>
+          
           <div class="feature-item">
-            <i class="material-icons">security</i>
-            <span>Segurança Empresarial</span>
+            <i class="material-icons">beach_access</i>
+            <div class="feature-text">
+              <span class="feature-title">Férias & Benefícios</span>
+              <span class="feature-desc">Gestão de benefícios integrada</span>
+            </div>
+          </div>
+          
+          <div class="feature-item">
+            <i class="material-icons">assessment</i>
+            <div class="feature-text">
+              <span class="feature-title">Relatórios & BI</span>
+              <span class="feature-desc">Insights para tomada de decisão</span>
+            </div>
           </div>
         </div>
       </div>
@@ -33,8 +52,11 @@
   <div class="auth-form-panel">
     <div class="form-container">
       <div class="form-header">
-        <h3>Acesso ao Sistema</h3>
-        <p>Digite suas credenciais para acessar a plataforma</p>
+        <div class="header-icon">
+          <i class="material-icons">account_circle</i>
+        </div>
+        <h3>Portal RH</h3>
+        <p>Acesse sua conta para gerenciar pessoas e processos</p>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
@@ -43,7 +65,7 @@
           <label for="email" class="field-label">Email Corporativo</label>
           <div class="field-container">
             <span class="field-icon">
-              <i class="material-icons">email</i>
+              <i class="material-icons">alternate_email</i>
             </span>
             <input
               id="email"
@@ -51,7 +73,7 @@
               formControlName="email"
               class="field-input"
               [class.error]="f['email'].invalid && f['email'].touched"
-              placeholder="seu.email@empresa.com"
+              placeholder="seu.email&#64;empresa.com"
               autocomplete="email"
             />
           </div>
@@ -96,7 +118,7 @@
         >
           <span *ngIf="submittingForm" class="btn-spinner"></span>
           <i class="material-icons" *ngIf="!submittingForm">login</i>
-          {{ submittingForm ? 'Autenticando...' : 'Entrar no Sistema' }}
+          {{ submittingForm ? 'Autenticando...' : 'Acessar Portal RH' }}
         </button>
       </form>
 
@@ -107,7 +129,7 @@
         
         <p class="signup-text">
           Não possui acesso? 
-          <a routerLink="/auth/register" class="signup-link">Solicitar Cadastro</a>
+          <a routerLink="/auth/register" class="signup-link">Solicitar Credenciais</a>
         </p>
       </div>
 
