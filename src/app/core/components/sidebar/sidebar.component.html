@@ -8,14 +8,6 @@
                     <!-- Seção Sistema de RH -->
                     <div class="drawer-menu-heading">Sistema de RH</div>
                     
-                    <!-- Drawer link (Dashboard/Relatórios)-->
-                    <a class="nav-link" routerLink="/reports" routerLinkActive="active">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">dashboard</i>
-                        </div>
-                        Dashboard
-                    </a>
-                    
                     <!-- Drawer link (Colaboradores)-->
                     <a class="nav-link" routerLink="/colaboradores" routerLinkActive="active">
                         <div class="nav-link-icon">
@@ -24,84 +16,11 @@
                         Colaboradores
                     </a>
                     
-                    <!-- Drawer link (Controle de Ponto)-->
-                    <a class="nav-link" routerLink="/entries" routerLinkActive="active">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">schedule</i>
-                        </div>
-                        Controle de Ponto
-                    </a>
+                    <!-- Seção Configurações -->
+                    <div class="drawer-menu-heading">Configurações</div>
                     
-                    <!-- Drawer link (Departamentos)-->
-                    <a class="nav-link" routerLink="/categories" routerLinkActive="active">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">apartment</i>
-                        </div>
-                        Departamentos
-                    </a>
-                    
-                    <!-- Drawer link (Relatórios)-->
-                    <a class="nav-link" routerLink="/reports" routerLinkActive="active">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">assessment</i>
-                        </div>
-                        Relatórios
-                    </a>
-                    
-                    <!-- Divisor -->
-                    <div class="drawer-menu-divider"></div>
-                    
-                    <!-- Seção Recursos Humanos -->
-                    <div class="drawer-menu-heading">Recursos Humanos</div>
-                    
-                    <!-- Drawer link (Férias)-->
-                    <a class="nav-link" href="#!" title="Em desenvolvimento">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">beach_access</i>
-                        </div>
-                        Férias
-                    </a>
-                    
-                    <!-- Drawer link (Benefícios)-->
-                    <a class="nav-link" href="#!" title="Em desenvolvimento">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">card_giftcard</i>
-                        </div>
-                        Benefícios
-                    </a>
-                    
-                    <!-- Drawer link (Avaliações)-->
-                    <a class="nav-link" href="#!" title="Em desenvolvimento">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">star</i>
-                        </div>
-                        Avaliações
-                    </a>
-                    
-                    <!-- Divisor -->
-                    <div class="drawer-menu-divider"></div>
-                    
-                    <!-- Seção Conta -->
-                    <div class="drawer-menu-heading">Conta</div>
-                    
-                    <!-- Drawer link (Perfil)-->
-                    <a class="nav-link" href="#!">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">person</i>
-                        </div>
-                        Perfil
-                    </a>
-                    
-                    <!-- Drawer link (Configurações)-->
-                    <a class="nav-link" href="#!">
-                        <div class="nav-link-icon">
-                            <i class="material-icons">settings</i>
-                        </div>
-                        Configurações
-                    </a>
-                    
-                    <!-- Drawer link (Sair)-->
-                    <a class="nav-link" href="javascript:void(0);" (click)="onLogout()">
+                    <!-- Drawer link (Sair/Logout)-->
+                    <a class="nav-link" (click)="onLogout()">
                         <div class="nav-link-icon">
                             <i class="material-icons">logout</i>
                         </div>
