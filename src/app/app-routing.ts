@@ -11,6 +11,10 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/colaboradores/colaboradores-routes').then(m => m.COLABORADORES_ROUTES),
       },
       {
+        path: 'cargos',
+        loadChildren: () => import('./pages/cargos/cargos-routes').then(m => m.CARGOS_ROUTES),
+      },
+      {
         path: '',
         redirectTo: '/colaboradores', pathMatch: 'full'
       }

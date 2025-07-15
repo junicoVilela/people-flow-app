@@ -153,17 +153,7 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
     ];
   }
 
-  deleteResource(resource: Colaborador): void {
-    this.openDeleteModal(resource);
-  }
 
-  override onPageChange(page: number): void {
-    super.onPageChange(page);
-  }
-
-  override onItemsPerPageChange(itemsPerPage: number): void {
-    super.onItemsPerPageChange(itemsPerPage);
-  }
 
   inativarColaborador(colaborador: Colaborador) {
     const dataDemissao = new Date();

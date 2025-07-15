@@ -175,6 +175,10 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     }, 100);
   }
 
+  deleteResource(resource: T): void {
+    this.openDeleteModal(resource);
+  }
+
   confirmDelete(): void {
     if (this.modalData) {
       this.deleteModalService.setDeleting(true);
