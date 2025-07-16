@@ -13,6 +13,8 @@ export class Colaborador extends BaseResourceModel {
         public endereco?: string,
         public cargo?: string,
         public departamento?: string,
+        public cargoId?: number,
+        public departamentoId?: number,
         public salario?: number,
         public dataAdmissao?: Date,
         public dataDemissao?: Date,
