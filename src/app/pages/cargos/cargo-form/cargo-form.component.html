@@ -68,6 +68,25 @@
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
+            <label for="departamentoId" class="form-label">Departamento *</label>
+            <select 
+              class="form-select" 
+              id="departamentoId" 
+              formControlName="departamentoId"
+              [class.is-invalid]="f['departamentoId'].invalid && f['departamentoId'].touched">
+              <option value="">Selecione o departamento</option>
+              <option *ngFor="let departamento of departamentos" [value]="departamento.id">
+                {{ departamento.nome }}
+              </option>
+            </select>
+            <app-form-field-error 
+              [form-control]="f['departamentoId']">
+            </app-form-field-error>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-3">
             <label for="salarioBase" class="form-label">Salário Base *</label>
             <div class="input-group">
               <span class="input-group-text">R$</span>
@@ -86,7 +105,9 @@
             </app-form-field-error>
           </div>
         </div>
+      </div>
 
+      <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
             <label for="ativo" class="form-label">Status</label>
