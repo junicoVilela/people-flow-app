@@ -1,0 +1,96 @@
+<app-bread-crumb
+        [items]="[{text: 'Departamentos'}, {text: currentAction === 'edit' ? 'Editar' : 'Novo'}]"
+></app-bread-crumb>
+
+<app-page-header
+    [page-title]="pageTitle"
+    [subtitle]="pageSubtitle"
+    button-text="Voltar"
+    button-link="../"
+    button-class="btn-outline-secondary"
+></app-page-header>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <form [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+          
+          <!-- Nome -->
+          <div class="mb-3">
+            <label for="nome" class="form-label fw-medium">
+              Nome <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="nome"
+              class="form-control"
+              formControlName="nome"
+              placeholder="Digite o nome do departamento"
+              [class.is-invalid]="f['nome'].invalid && f['nome'].touched">
+            
+            <div *ngIf="f['nome'].invalid && f['nome'].touched" class="invalid-feedback">
+              <div *ngIf="f['nome'].errors?.['required']">Nome é obrigatório</div>
+              <div *ngIf="f['nome'].errors?.['minlength']">Nome deve ter pelo menos 2 caracteres</div>
+              <div *ngIf="f['nome'].errors?.['maxlength']">Nome deve ter no máximo 100 caracteres</div>
+            </div>
+          </div>
+
+          <!-- Descrição -->
+          <div class="mb-3">
+            <label for="descricao" class="form-label fw-medium">
+              Descrição
+            </label>
+            <textarea 
+              id="descricao"
+              class="form-control"
+              formControlName="descricao"
+              placeholder="Digite uma descrição para o departamento"
+              rows="3"
+              [class.is-invalid]="f['descricao'].invalid && f['descricao'].touched">
+            </textarea>
+            
+            <div *ngIf="f['descricao'].invalid && f['descricao'].touched" class="invalid-feedback">
+              <div *ngIf="f['descricao'].errors?.['maxlength']">Descrição deve ter no máximo 250 caracteres</div>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-4">
+            <div class="form-check">
+              <input 
+                type="checkbox" 
+                id="ativo"
+                class="form-check-input"
+                formControlName="ativo">
+              <label class="form-check-label fw-medium" for="ativo">
+                Departamento ativo
+              </label>
+            </div>
+            <small class="form-text text-muted">
+              Departamentos inativos não podem receber novos cargos
+            </small>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="d-flex gap-2 justify-content-end">
+            <a 
+              routerLink="../" 
+              class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle me-2"></i>
+              Cancelar
+            </a>
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="submittingForm || resourceForm.invalid">
+              <span *ngIf="submittingForm" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!submittingForm" class="bi bi-check-circle me-2"></i>
+              {{ currentAction === 'edit' ? 'Atualizar' : 'Criar' }} Departamento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> 

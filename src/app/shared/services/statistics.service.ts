@@ -1,50 +1,50 @@
 import { Injectable } from '@angular/core';
 
 export interface StatisticsCard {
-  icon: string;
-  iconColor: string;
-  value: string | number;
-  label: string;
-  valueColor?: string;
+    icon: string;
+    iconColor: string;
+    value: string | number;
+    label: string;
+    valueColor?: string;
 }
 
 export interface StatisticsConfig {
-  cards: StatisticsCard[];
+    cards: StatisticsCard[];
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class StatisticsService {
-  
-  get config(): StatisticsConfig {
-    return {
-      cards: [
-        {
-          icon: 'bi-collection',
-          iconColor: 'primary',
-          value: 0,
-          label: 'Total de Itens'
-        }
-      ]
-    };
-  }
 
-  get statisticsCards(): StatisticsCard[] {
-    return this.config.cards;
-  }
+    get config(): StatisticsConfig {
+        return {
+            cards: [
+                {
+                    icon: 'bi-collection',
+                    iconColor: 'primary',
+                    value: 0,
+                    label: 'Total de Itens'
+                }
+            ]
+        };
+    }
 
-  updateCardValue(cards: StatisticsCard[], label: string, value: number | string): StatisticsCard[] {
-    return cards.map(card => 
-      card.label === label ? { ...card, value } : card
-    );
-  }
+    get statisticsCards(): StatisticsCard[] {
+        return this.config.cards;
+    }
 
-  addCard(cards: StatisticsCard[], newCard: StatisticsCard): StatisticsCard[] {
-    return [...cards, newCard];
-  }
+    updateCardValue(cards: StatisticsCard[], label: string, value: number | string): StatisticsCard[] {
+        return cards.map(card =>
+            card.label === label ? {...card, value} : card
+        );
+    }
 
-  removeCard(cards: StatisticsCard[], label: string): StatisticsCard[] {
-    return cards.filter(card => card.label !== label);
-  }
+    addCard(cards: StatisticsCard[], newCard: StatisticsCard): StatisticsCard[] {
+        return [...cards, newCard];
+    }
+
+    removeCard(cards: StatisticsCard[], label: string): StatisticsCard[] {
+        return cards.filter(card => card.label !== label);
+    }
 } 

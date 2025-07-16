@@ -1,16 +1,16 @@
 export interface PaginationConfig {
-  options: PaginationOptions;
-  defaultItemsPerPage: number;
-  enableItemsPerPage?: boolean;
+    options: PaginationOptions;
+    defaultItemsPerPage: number;
+    enableItemsPerPage?: boolean;
 }
 
 export interface PaginationData {
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-  totalItems: number;
-  startItem: number;
-  endItem: number;
+    currentPage: number;
+    totalPages: number;
+    itemsPerPage: number;
+    totalItems: number;
+    startItem: number;
+    endItem: number;
 }
 
 // Import necessário para PaginationOptions

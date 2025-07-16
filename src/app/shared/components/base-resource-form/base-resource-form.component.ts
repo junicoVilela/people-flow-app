@@ -1,13 +1,13 @@
-import { OnInit, AfterContentChecked, Injector, Directive } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { HttpErrorResponse } from "@angular/common/http";
+import { AfterContentChecked, Directive, Injector, OnInit } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { BaseResourceModel } from "../../models/base-resource.model";
-import { BaseResourceService } from "../../services/base-resource.service";
-import { CanComponentDeactivate } from "../../../core/guards/can-deactivate.guard";
+import { BaseResourceModel } from '../../models/base-resource.model';
+import { BaseResourceService } from '../../services/base-resource.service';
+import { CanComponentDeactivate } from '../../../core/guards/can-deactivate.guard';
 
-import { switchMap } from "rxjs/operators";
+import { switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { ToastrService } from 'ngx-toastr';
@@ -178,15 +178,11 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel>
 
         // Se for uma criação (new), navega para a edição do recurso criado
         if (this.currentAction === 'new' && resource.id) {
-            // Usa navigateByUrl com skipLocationChange para forçar reload e depois navega para edit
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(
-                () => this.router.navigate([baseComponentPath, resource.id, "edit"])
-            );
+            // Navega diretamente para a edição do recurso criado
+            this.router.navigate([baseComponentPath, resource.id, "edit"]);
         } else {
             // Se for uma edição, volta para a lista
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(
-                () => this.router.navigate([baseComponentPath])
-            );
+            this.router.navigate([baseComponentPath]);
         }
     }
 
@@ -210,7 +206,13 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel>
             segments.pop();
         }
 
-        return segments.length > 0 ? `/${segments[segments.length - 1]}` : '';
+        // Se não conseguir extrair do parent, tenta extrair da URL atual
+        if (segments.length > 0) {
+            return `/${segments[segments.length - 1]}`;
+        }
+
+        // Último fallback: retorna string vazia para evitar navegação incorreta
+        return '';
     }
 
     protected actionsForError(error: any) {

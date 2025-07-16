@@ -5,10 +5,8 @@ import { BaseResourceModel } from '../../models/base-resource.model';
 import { PaginationService } from '../../services/pagination.service';
 import { PaginationData } from '../../models/pagination.model';
 import { SearchService } from '../../services/search.service';
-import { StatisticsService, StatisticsCard } from '../../services/statistics.service';
+import { StatisticsCard, StatisticsService } from '../../services/statistics.service';
 import { DeleteModalService } from '../../services/delete-modal.service';
-import { PaginationOptions } from '../pagination/pagination.component';
-import { PageLoadingConfig } from '../page-loading/page-loading.component';
 import { EmptyStateConfig } from '../empty-state/empty-state.component';
 
 @Component({

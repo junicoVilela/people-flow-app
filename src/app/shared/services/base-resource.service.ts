@@ -1,11 +1,11 @@
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injector } from "@angular/core";
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injector } from '@angular/core';
 
-import { Observable, throwError } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
-import { BaseResourceModel } from "../models/base-resource.model";
-import { environment } from "../../../environments/environment";
+import { BaseResourceModel } from '../models/base-resource.model';
+import { environment } from '../../../environments/environment';
 
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
@@ -35,7 +35,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
                 } else {
                     jsonData = [];
                 }
-                
+
                 return this.jsonDataToResources(jsonData);
             }),
             catchError(this.handleError)
@@ -92,7 +92,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     protected handleError = (error: HttpErrorResponse): Observable<never> => {
         if (environment.enableLogs) {
-            console.error("Erro na requisição:", {
+            console.error('Erro na requisição:', {
                 status: error.status,
                 message: error.message,
                 url: error.url,

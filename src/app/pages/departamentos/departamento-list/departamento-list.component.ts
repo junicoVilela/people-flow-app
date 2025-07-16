@@ -1,33 +1,29 @@
 import { Component, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
-import { Cargo, NivelCargoLabels } from '../shared/cargo.model';
-import { CargoService } from '../shared/cargo.service';
+import { Departamento } from '../shared/departamento.model';
+import { DepartamentoService } from '../shared/departamento.service';
 import { BaseResourceListComponent } from '../../../shared/components/base-resource-list/base-resource-list.component';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { SearchService } from '../../../shared/services/search.service';
-import { StatisticsService, StatisticsCard } from '../../../shared/services/statistics.service';
+import { StatisticsCard, StatisticsService } from '../../../shared/services/statistics.service';
 import { DeleteModalService } from '../../../shared/services/delete-modal.service';
-import { PaginationOptions } from '../../../shared/components/pagination/pagination.component';
+import { PaginationComponent, PaginationOptions } from '../../../shared/components/pagination/pagination.component';
 
 import { BreadCrumbComponent } from '../../../shared/components/bread-crumb/bread-crumb.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import {
-    ConfirmDeleteModalComponent
-} from '../../../shared/components/confirm-delete-modal/confirm-delete-modal.component';
-import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { StatisticsCardsComponent } from '../../../shared/components/statistics-cards/statistics-cards.component';
 import { EmptyStateComponent, EmptyStateConfig } from '../../../shared/components/empty-state/empty-state.component';
 import { PageLoadingComponent } from '../../../shared/components/page-loading/page-loading.component';
 import { ResourceFiltersComponent } from '../../../shared/components/resource-filters/resource-filters.component';
 
 @Component({
-    selector: 'app-cargo-list',
-    templateUrl: './cargo-list.component.html',
-    styleUrls: ['./cargo-list.component.scss'],
+    selector: 'app-departamento-list',
+    templateUrl: './departamento-list.component.html',
+    styleUrls: ['./departamento-list.component.scss'],
     standalone: true,
     imports: [
         CommonModule,
@@ -35,7 +31,6 @@ import { ResourceFiltersComponent } from '../../../shared/components/resource-fi
         RouterLink,
         BreadCrumbComponent,
         PageHeaderComponent,
-        ConfirmDeleteModalComponent,
         PaginationComponent,
         StatisticsCardsComponent,
         EmptyStateComponent,
@@ -43,23 +38,19 @@ import { ResourceFiltersComponent } from '../../../shared/components/resource-fi
         ResourceFiltersComponent
     ]
 })
-export class CargoListComponent extends BaseResourceListComponent<Cargo> {
-
-    nivelCargoLabels = NivelCargoLabels;
+export class DepartamentoListComponent extends BaseResourceListComponent<Departamento> {
 
     constructor(
-        private cargoService: CargoService,
+        private departamentoService: DepartamentoService,
         protected override injector: Injector,
         protected override toastrService: ToastrService,
         protected override paginationService: PaginationService,
         protected override searchService: SearchService,
         protected override statisticsService: StatisticsService,
-        protected override deleteModalService: DeleteModalService,
-        private router: Router,
-        private route: ActivatedRoute
+        protected override deleteModalService: DeleteModalService
     ) {
         super(
-            cargoService,
+            departamentoService,
             injector,
             toastrService,
             paginationService,
@@ -69,28 +60,28 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> {
         );
     }
 
-    public getResourceIcon(cargo: Cargo): string {
-        return 'bi-briefcase';
+    public getResourceIcon(departamento: Departamento): string {
+        return 'bi-building';
     }
 
-    protected getResourceDisplayName(cargo: Cargo): string {
-        return cargo.nome || 'Cargo sem nome';
+    protected getResourceDisplayName(departamento: Departamento): string {
+        return departamento.nome || 'Departamento sem nome';
     }
 
     override get emptyStateConfig(): EmptyStateConfig {
         return {
-            icon: 'bi-briefcase',
-            title: 'Nenhum cargo encontrado',
-            description: 'Comece criando seu primeiro cargo',
-            buttonText: 'Criar Primeiro Cargo',
-            buttonLink: 'new'
+            icon: 'bi-building',
+            title: 'Nenhum departamento encontrado',
+            description: 'Não há departamentos cadastrados no sistema.',
+            buttonText: 'Cadastrar Departamento',
+            buttonLink: '/departamentos/novo'
         };
     }
 
     override get loadingConfig() {
         return {
-            title: 'Carregando cargos...',
-            description: 'Aguarde enquanto buscamos os cargos'
+            title: 'Carregando departamentos...',
+            description: 'Aguarde enquanto buscamos os departamentos'
         };
     }
 
@@ -99,72 +90,62 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> {
             itemsPerPageOptions: [5, 10, 20, 50],
             showItemsPerPage: true,
             showInfo: true,
-            iconClass: 'bi-briefcase',
+            iconClass: 'bi-building',
             iconColor: 'primary',
-            itemType: 'cargos'
+            itemType: 'departamentos'
         };
     }
 
     override get searchPlaceholder(): string {
-        return 'Buscar cargos...';
+        return 'Buscar departamentos...';
     }
 
-    override matchesSearch(cargo: Cargo, searchTerm: string): boolean {
-        return cargo.nome?.toLowerCase().includes(searchTerm) ||
-            cargo.descricao?.toLowerCase().includes(searchTerm) ||
-            cargo.departamentoNome?.toLowerCase().includes(searchTerm) ||
-            cargo.nivel?.toLowerCase().includes(searchTerm) ||
+    override matchesSearch(departamento: Departamento, searchTerm: string): boolean {
+        return departamento.nome?.toLowerCase().includes(searchTerm) ||
+            departamento.descricao?.toLowerCase().includes(searchTerm) ||
             false;
     }
 
     override get pageSubtitle(): string {
-        return 'Gerencie os cargos da empresa';
+        return 'Gerencie os departamentos da empresa';
     }
 
-    get totalCargos(): number {
+    get totalDepartamentos(): number {
         return this.resources.length;
     }
 
-    get cargosAtivos(): number {
-        return this.resources.filter(cargo => cargo.ativo).length;
+    get departamentosAtivos(): number {
+        return this.resources.filter(departamento => departamento.ativo).length;
     }
 
-    get cargosInativos(): number {
-        return this.resources.filter(cargo => !cargo.ativo).length;
+    get departamentosInativos(): number {
+        return this.resources.filter(departamento => !departamento.ativo).length;
     }
 
     override get statisticsCards(): StatisticsCard[] {
         return [
             {
-                icon: 'bi-briefcase',
+                icon: 'bi-building',
                 iconColor: 'primary',
-                value: this.totalCargos,
-                label: 'Total de Cargos'
+                value: this.totalDepartamentos,
+                label: 'Total de Departamentos'
             },
             {
                 icon: 'bi-check-circle',
                 iconColor: 'success',
-                value: this.cargosAtivos,
-                label: 'Cargos Ativos'
+                value: this.departamentosAtivos,
+                label: 'Departamentos Ativos'
             },
             {
                 icon: 'bi-x-circle',
                 iconColor: 'danger',
-                value: this.cargosInativos,
-                label: 'Cargos Inativos'
+                value: this.departamentosInativos,
+                label: 'Departamentos Inativos'
             }
         ];
     }
 
-    formatSalario(salario: number | undefined): string {
-        if (!salario) return 'R$ 0,00';
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(salario);
-    }
-
     protected formatResourceDate(date: any): string {
-        return '';
+        return new Date(date).toLocaleDateString('pt-BR');
     }
 } 

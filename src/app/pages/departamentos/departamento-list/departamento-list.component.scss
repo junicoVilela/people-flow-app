@@ -1,0 +1,29 @@
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+.btn-group .btn {
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.table {
+  th {
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  td {
+    vertical-align: middle;
+  }
+}
+
+.badge {
+  font-size: 0.75rem;
+} 
