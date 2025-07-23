@@ -48,7 +48,8 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
     public filtrosAvancados: ColaboradorFilter = {
         nome: '',
         cargo: '',
-        departamento: ''
+        departamento: '',
+        status: ''
     };
     public mostrarFiltrosAvancados = false;
 
@@ -121,7 +122,8 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         this.filtrosAvancados = {
             nome: '',
             cargo: '',
-            departamento: ''
+            departamento: '',
+            status: ''
         };
         this.mostrarFiltrosAvancados = false;
         this.loadResources();
@@ -134,7 +136,8 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
     public hasActiveFilters(): boolean {
         return !!(this.filtrosAvancados.nome?.trim() ||
             this.filtrosAvancados.cargo?.trim() ||
-            this.filtrosAvancados.departamento?.trim());
+            this.filtrosAvancados.departamento?.trim() ||
+            this.filtrosAvancados.status?.trim());
     }
 
     public getActiveFiltersCount(): number {
@@ -142,6 +145,7 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         if (this.filtrosAvancados.nome?.trim()) count++;
         if (this.filtrosAvancados.cargo?.trim()) count++;
         if (this.filtrosAvancados.departamento?.trim()) count++;
+        if (this.filtrosAvancados.status?.trim()) count++;
         return count;
     }
 
@@ -158,7 +162,8 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         const filter: ColaboradorFilter = {
             nome: trimmedTerm,
             cargo: '',
-            departamento: ''
+            departamento: '',
+            status: ''
         };
 
         this.colaboradorService.getAllWithFilters(

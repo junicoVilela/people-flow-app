@@ -11,6 +11,7 @@ export interface ColaboradorFilter {
   nome?: string;
   cargo?: string;
   departamento?: string;
+  status?: string;
 }
 
 @Injectable({
@@ -35,6 +36,9 @@ export class ColaboradorService extends BaseResourceService<Colaborador> {
     }
     if (filter.departamento) {
       params = params.set('departamento', filter.departamento);
+    }
+    if (filter.status) {
+      params = params.set('status', filter.status);
     }
 
     const url = `${environment.apiUrl}/${this.apiPath}`;

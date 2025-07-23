@@ -94,6 +94,25 @@
           <i class="bi bi-search input-icon"></i>
         </div>
       </div>
+
+      <div class="filter-item">
+        <div class="filter-label">
+          <i class="bi bi-person-check"></i>
+          <span>Status</span>
+        </div>
+        <div class="filter-input-wrapper">
+          <select 
+            class="filter-input"
+            [(ngModel)]="filtrosAvancados.status"
+            (change)="aplicarFiltrosAvancados()">
+            <option value="">Todos os status</option>
+            <option value="ATIVO">Ativo</option>
+            <option value="DESLIGADO">Desligado</option>
+            <option value="FERIAS">Férias</option>
+          </select>
+          <i class="bi bi-chevron-down input-icon"></i>
+        </div>
+      </div>
     </div>
 
     <div class="filters-actions">
@@ -230,6 +249,10 @@
               Data de Admissão
             </th>
             <th scope="col" class="border-0 text-center">
+              <i class="bi bi-calendar-x me-2"></i>
+              Data de Demissão
+            </th>
+            <th scope="col" class="border-0 text-center">
               <i class="bi bi-gear me-2"></i>
               Ações
             </th>
@@ -265,6 +288,12 @@
                     [ngClass]="colaborador.status === 'ATIVO' ? 'bg-success' : 'bg-danger'">
                 {{ colaborador.status }}
               </span>
+            </td>
+            <td class="text-center">
+              <span class="text-muted" *ngIf="colaborador.dataDemissao">
+                {{ formatResourceDate(colaborador.dataDemissao) }}
+              </span>
+              <span class="text-muted" *ngIf="!colaborador.dataDemissao">-</span>
             </td>
             <td class="text-center">
               <div class="btn-group btn-group-sm">

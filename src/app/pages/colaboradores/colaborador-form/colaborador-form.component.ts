@@ -60,6 +60,7 @@ export class ColaboradorFormComponent extends BaseResourceFormComponent<Colabora
         this.adjustPasswordValidation();
         this.loadDepartamentos();
         this.loadCargos();
+        this.setupStatusValidation();
     }
 
     ngAfterViewInit(): void {
@@ -126,6 +127,25 @@ export class ColaboradorFormComponent extends BaseResourceFormComponent<Colabora
         }
     }
 
+    private setupStatusValidation(): void {
+        const statusControl = this.resourceForm.get('status');
+        const dataDemissaoControl = this.resourceForm.get('dataDemissao');
+        
+        if (statusControl && dataDemissaoControl) {
+            statusControl.valueChanges.subscribe(status => {
+                if (status === 'DESLIGADO') {
+                    dataDemissaoControl.setValidators([Validators.required]);
+                    dataDemissaoControl.enable();
+                } else {
+                    dataDemissaoControl.clearValidators();
+                    dataDemissaoControl.disable();
+                    dataDemissaoControl.setValue(null);
+                }
+                dataDemissaoControl.updateValueAndValidity();
+            });
+        }
+    }
+
     protected buildResourceForm() {
         this.resourceForm = this.formBuilder.group({
             id: [null],
@@ -142,7 +162,9 @@ export class ColaboradorFormComponent extends BaseResourceFormComponent<Colabora
             cargoId: [null, [Validators.required]],
             departamentoId: [null, [Validators.required]],
             salario: [null, [Validators.required, Validators.min(0.01)]],
-            dataAdmissao: [null, [Validators.required]]
+            dataAdmissao: [null, [Validators.required]],
+            dataDemissao: [null],
+            status: [null, [Validators.required]]
         });
     }
 
