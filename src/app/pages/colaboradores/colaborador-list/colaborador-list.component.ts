@@ -1,24 +1,24 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
 import { Colaborador } from '../shared/colaborador.model';
-import { ColaboradorService } from '../shared/colaborador.service';
+import { ColaboradorFilter, ColaboradorService } from '../shared/colaborador.service';
 import { BaseResourceListComponent } from '../../../shared/components/base-resource-list/base-resource-list.component';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { SearchService } from '../../../shared/services/search.service';
-import { StatisticsService, StatisticsCard } from '../../../shared/services/statistics.service';
+import { StatisticsCard, StatisticsService } from '../../../shared/services/statistics.service';
 import { DeleteModalService } from '../../../shared/services/delete-modal.service';
-import { PaginationOptions } from '../../../shared/components/pagination/pagination.component';
+import { PaginationComponent, PaginationOptions } from '../../../shared/components/pagination/pagination.component';
 
 import { BreadCrumbComponent } from '../../../shared/components/bread-crumb/bread-crumb.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import {
     ConfirmDeleteModalComponent
 } from '../../../shared/components/confirm-delete-modal/confirm-delete-modal.component';
-import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { StatisticsCardsComponent } from '../../../shared/components/statistics-cards/statistics-cards.component';
 import { EmptyStateComponent, EmptyStateConfig } from '../../../shared/components/empty-state/empty-state.component';
 import { PageLoadingComponent } from '../../../shared/components/page-loading/page-loading.component';
@@ -43,7 +43,17 @@ import { ResourceFiltersComponent } from '../../../shared/components/resource-fi
         ResourceFiltersComponent
     ]
 })
-export class ColaboradorListComponent extends BaseResourceListComponent<Colaborador> {
+export class ColaboradorListComponent extends BaseResourceListComponent<Colaborador> implements OnInit, OnDestroy {
+
+    public filtrosAvancados: ColaboradorFilter = {
+        nome: '',
+        cargo: '',
+        departamento: ''
+    };
+    public mostrarFiltrosAvancados = false;
+
+    private searchSubject = new Subject<string>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private colaboradorService: ColaboradorService,
@@ -53,8 +63,6 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         protected override searchService: SearchService,
         protected override statisticsService: StatisticsService,
         protected override deleteModalService: DeleteModalService,
-        private router: Router,
-        private route: ActivatedRoute
     ) {
         super(
             colaboradorService,
@@ -65,6 +73,124 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
             statisticsService,
             deleteModalService
         );
+    }
+
+    override ngOnInit(): void {
+        super.ngOnInit();
+
+        this.searchSubject.pipe(
+            debounceTime(500),
+            distinctUntilChanged(),
+            takeUntil(this.destroy$)
+        ).subscribe(searchTerm => {
+            this.performSearch(searchTerm);
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    public aplicarFiltrosAvancados(): void {
+        this.isLoading = true;
+
+        this.colaboradorService.getAllWithFilters(
+            this.filtrosAvancados,
+            0,
+            this.paginationData.itemsPerPage
+        ).subscribe({
+            next: (response) => {
+                this.resources = response.content;
+                this.filteredResources = [...this.resources];
+                this.paginationData.totalItems = response.totalElements;
+                this.paginationData.totalPages = response.totalPages;
+                this.paginationData.currentPage = 1;
+                this.paginatedResources = this.paginationService.updatePagination(this.filteredResources);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao buscar colaboradores com filtros:', error);
+                this.isLoading = false;
+                this.toastrService.error('Erro ao buscar colaboradores');
+            }
+        });
+    }
+
+    public limparFiltros(): void {
+        this.filtrosAvancados = {
+            nome: '',
+            cargo: '',
+            departamento: ''
+        };
+        this.mostrarFiltrosAvancados = false;
+        this.loadResources();
+    }
+
+    public toggleFiltrosAvancados(): void {
+        this.mostrarFiltrosAvancados = !this.mostrarFiltrosAvancados;
+    }
+
+    public hasActiveFilters(): boolean {
+        return !!(this.filtrosAvancados.nome?.trim() ||
+            this.filtrosAvancados.cargo?.trim() ||
+            this.filtrosAvancados.departamento?.trim());
+    }
+
+    public getActiveFiltersCount(): number {
+        let count = 0;
+        if (this.filtrosAvancados.nome?.trim()) count++;
+        if (this.filtrosAvancados.cargo?.trim()) count++;
+        if (this.filtrosAvancados.departamento?.trim()) count++;
+        return count;
+    }
+
+    private performSearch(searchTerm: string): void {
+        const trimmedTerm = searchTerm.trim();
+
+        if (!trimmedTerm || trimmedTerm.length < 3) {
+            this.loadResources();
+            return;
+        }
+
+        this.isLoading = true;
+
+        const filter: ColaboradorFilter = {
+            nome: trimmedTerm,
+            cargo: '',
+            departamento: ''
+        };
+
+        this.colaboradorService.getAllWithFilters(
+            filter,
+            0,
+            this.paginationData.itemsPerPage
+        ).subscribe({
+            next: (response) => {
+                this.resources = response.content;
+                this.filteredResources = [...this.resources];
+                this.paginationData.totalItems = response.totalElements;
+                this.paginationData.totalPages = response.totalPages;
+                this.paginationData.currentPage = 1;
+                this.paginatedResources = this.paginationService.updatePagination(this.filteredResources);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao buscar colaboradores:', error);
+                this.isLoading = false;
+                this.toastrService.error('Erro ao buscar colaboradores');
+            }
+        });
+    }
+
+    public onSearchChange(searchTerm: string): void {
+        this.searchService.searchTerm = searchTerm;
+        this.searchSubject.next(searchTerm);
+    }
+
+    override filterResources(): void {
+        const searchTerm = this.searchService.searchTerm;
+        this.searchSubject.next(searchTerm);
     }
 
     public getResourceIcon(colaborador: Colaborador): string {
@@ -105,15 +231,6 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
 
     override get searchPlaceholder(): string {
         return 'Buscar colaboradores...';
-    }
-
-    override matchesSearch(colaborador: Colaborador, searchTerm: string): boolean {
-        return colaborador.nome?.toLowerCase().includes(searchTerm) ||
-            colaborador.email?.toLowerCase().includes(searchTerm) ||
-            colaborador.cpf?.includes(searchTerm) ||
-            colaborador.cargo?.toLowerCase().includes(searchTerm) ||
-            colaborador.departamento?.toLowerCase().includes(searchTerm) ||
-            false;
     }
 
     override get pageSubtitle(): string {

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -15,7 +15,8 @@ export interface ResourceFiltersConfig {
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './resource-filters.component.html',
-    styleUrls: ['./resource-filters.component.scss']
+    styleUrls: ['./resource-filters.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResourceFiltersComponent {
     @Input() config: ResourceFiltersConfig = {
@@ -33,4 +34,9 @@ export class ResourceFiltersComponent {
     @Output() searchChange = new EventEmitter<string>();
     @Output() itemsPerPageChange = new EventEmitter<number>();
     @Output() viewModeChange = new EventEmitter<'grid' | 'list'>();
+
+    onSearchInput(value: string): void {
+        this.searchTerm = value;
+        this.searchChange.emit(value);
+    }
 } 
