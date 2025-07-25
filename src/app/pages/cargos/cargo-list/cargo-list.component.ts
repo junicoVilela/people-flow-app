@@ -1,10 +1,11 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
-import { Cargo, NivelCargoLabels } from '../shared/cargo.model';
+import { Cargo, NivelCargoLabels, CargoFilter } from '../shared/cargo.model';
 import { CargoService } from '../shared/cargo.service';
 import { BaseResourceListComponent } from '../../../shared/components/base-resource-list/base-resource-list.component';
 import { PaginationService } from '../../../shared/services/pagination.service';
@@ -43,9 +44,19 @@ import { ResourceFiltersComponent } from '../../../shared/components/resource-fi
         ResourceFiltersComponent
     ]
 })
-export class CargoListComponent extends BaseResourceListComponent<Cargo> {
+export class CargoListComponent extends BaseResourceListComponent<Cargo> implements OnInit, OnDestroy {
 
     nivelCargoLabels = NivelCargoLabels;
+
+    public filtrosAvancados: CargoFilter = {
+        nome: '',
+        departamento: '',
+        status: ''
+    };
+    public mostrarFiltrosAvancados = false;
+
+    private searchSubject = new Subject<string>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private cargoService: CargoService,
@@ -67,6 +78,126 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> {
             statisticsService,
             deleteModalService
         );
+    }
+
+    override ngOnInit(): void {
+        super.ngOnInit();
+
+        this.searchSubject.pipe(
+            debounceTime(500),
+            distinctUntilChanged(),
+            takeUntil(this.destroy$)
+        ).subscribe(searchTerm => {
+            this.performSearch(searchTerm);
+        });
+
+        this.mostrarFiltrosAvancados = false;
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    public aplicarFiltrosAvancados(): void {
+        this.isLoading = true;
+
+        this.cargoService.getAllWithFilters(
+            this.filtrosAvancados,
+            0,
+            this.paginationData.itemsPerPage
+        ).subscribe({
+            next: (response) => {
+                this.resources = response.content;
+                this.filteredResources = [...this.resources];
+                this.paginationData.totalItems = response.totalElements;
+                this.paginationData.totalPages = response.totalPages;
+                this.paginationData.currentPage = 1;
+                this.paginatedResources = this.paginationService.updatePagination(this.filteredResources);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao buscar cargos com filtros:', error);
+                this.isLoading = false;
+                this.toastrService.error('Erro ao buscar cargos');
+            }
+        });
+    }
+
+    public limparFiltros(): void {
+        this.filtrosAvancados = {
+            nome: '',
+            departamento: '',
+            status: ''
+        };
+        this.mostrarFiltrosAvancados = false;
+        this.loadResources();
+    }
+
+    public toggleFiltrosAvancados(): void {
+        this.mostrarFiltrosAvancados = !this.mostrarFiltrosAvancados;
+    }
+
+    public hasActiveFilters(): boolean {
+        return !!(this.filtrosAvancados.nome?.trim() ||
+            this.filtrosAvancados.departamento?.trim() ||
+            this.filtrosAvancados.status?.trim());
+    }
+
+    public getActiveFiltersCount(): number {
+        let count = 0;
+        if (this.filtrosAvancados.nome?.trim()) count++;
+        if (this.filtrosAvancados.departamento?.trim()) count++;
+        if (this.filtrosAvancados.status?.trim()) count++;
+        return count;
+    }
+
+    private performSearch(searchTerm: string): void {
+        const trimmedTerm = searchTerm.trim();
+
+        if (!trimmedTerm || trimmedTerm.length < 3) {
+            this.loadResources();
+            return;
+        }
+
+        this.isLoading = true;
+
+        const filter: CargoFilter = {
+            nome: trimmedTerm,
+            departamento: '',
+            status: ''
+        };
+
+        this.cargoService.getAllWithFilters(
+            filter,
+            0,
+            this.paginationData.itemsPerPage
+        ).subscribe({
+            next: (response) => {
+                this.resources = response.content;
+                this.filteredResources = [...this.resources];
+                this.paginationData.totalItems = response.totalElements;
+                this.paginationData.totalPages = response.totalPages;
+                this.paginationData.currentPage = 1;
+                this.paginatedResources = this.paginationService.updatePagination(this.filteredResources);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao buscar cargos:', error);
+                this.isLoading = false;
+                this.toastrService.error('Erro ao buscar cargos');
+            }
+        });
+    }
+
+    public onSearchChange(searchTerm: string): void {
+        this.searchService.searchTerm = searchTerm;
+        this.searchSubject.next(searchTerm);
+    }
+
+    override filterResources(): void {
+        const searchTerm = this.searchService.searchTerm;
+        this.searchSubject.next(searchTerm);
     }
 
     public getResourceIcon(cargo: Cargo): string {
@@ -107,14 +238,6 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> {
 
     override get searchPlaceholder(): string {
         return 'Buscar cargos...';
-    }
-
-    override matchesSearch(cargo: Cargo, searchTerm: string): boolean {
-        return cargo.nome?.toLowerCase().includes(searchTerm) ||
-            cargo.descricao?.toLowerCase().includes(searchTerm) ||
-            cargo.departamentoNome?.toLowerCase().includes(searchTerm) ||
-            cargo.nivel?.toLowerCase().includes(searchTerm) ||
-            false;
     }
 
     override get pageSubtitle(): string {

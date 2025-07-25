@@ -14,24 +14,143 @@
 
 <app-page-loading *ngIf="isLoading" [config]="loadingConfig"></app-page-loading>
 
+<div class="filters-modern mb-4">
+  <div class="filters-header">
+    <div class="filters-title">
+      <i class="bi bi-sliders"></i>
+      <span>Filtros Avançados</span>
+      <div *ngIf="hasActiveFilters()" class="active-indicator">
+        <span class="dot"></span>
+        <span class="count">{{ getActiveFiltersCount() }}</span>
+      </div>
+    </div>
+
+    <div class="filters-controls">
+      <button 
+        type="button" 
+        class="btn btn-outline-primary btn-sm"
+        (click)="toggleFiltrosAvancados()"
+        [class.active]="mostrarFiltrosAvancados">
+        <i class="bi" [class.bi-chevron-down]="!mostrarFiltrosAvancados" [class.bi-chevron-up]="mostrarFiltrosAvancados"></i>
+      </button>
+      
+      <button 
+        *ngIf="hasActiveFilters()"
+        type="button" 
+        class="btn btn-outline-danger btn-sm ms-2"
+        (click)="limparFiltros()">
+        <i class="bi bi-x-lg me-1"></i>
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-panel" [class.expanded]="mostrarFiltrosAvancados">
+    <div class="filters-grid">
+      <div class="filter-item">
+        <div class="filter-label">
+          <i class="bi bi-briefcase"></i>
+          <span>Nome do Cargo</span>
+        </div>
+        <div class="filter-input-wrapper">
+          <input 
+            type="text" 
+            class="filter-input"
+            [(ngModel)]="filtrosAvancados.nome"
+            placeholder="Buscar por nome do cargo..."
+            (keyup.enter)="aplicarFiltrosAvancados()">
+          <i class="bi bi-search input-icon"></i>
+        </div>
+      </div>
+
+      <div class="filter-item">
+        <div class="filter-label">
+          <i class="bi bi-building"></i>
+          <span>Departamento</span>
+        </div>
+        <div class="filter-input-wrapper">
+          <input 
+            type="text" 
+            class="filter-input"
+            [(ngModel)]="filtrosAvancados.departamento"
+            placeholder="Buscar por departamento..."
+            (keyup.enter)="aplicarFiltrosAvancados()">
+          <i class="bi bi-search input-icon"></i>
+        </div>
+      </div>
+
+      <div class="filter-item">
+        <div class="filter-label">
+          <i class="bi bi-check-circle"></i>
+          <span>Status</span>
+        </div>
+        <div class="filter-input-wrapper">
+          <select 
+            class="filter-input"
+            [(ngModel)]="filtrosAvancados.status"
+            (change)="aplicarFiltrosAvancados()">
+            <option value="">Todos os status</option>
+            <option value="ATIVO">Ativo</option>
+            <option value="INATIVO">Inativo</option>
+          </select>
+          <i class="bi bi-chevron-down input-icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters-actions">
+      <button 
+        type="button" 
+        class="btn btn-primary"
+        (click)="aplicarFiltrosAvancados()"
+        [disabled]="!hasActiveFilters()">
+        <i class="bi bi-search me-2"></i>
+        Buscar
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn-outline-secondary ms-2"
+        (click)="limparFiltros()">
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Resetar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && hasActiveFilters()" class="quick-stats">
+  <div class="stat-item">
+    <i class="bi bi-search"></i>
+    <span>{{ getActiveFiltersCount() }} filtro(s)</span>
+  </div>
+  <div class="stat-item">
+    <i class="bi bi-briefcase"></i>
+    <span>{{ resources.length }} resultado(s)</span>
+  </div>
+</div>
+
+<!-- Filtros e Controles -->
+<app-resource-filters
+  *ngIf="!isLoading"
+  [config]="{
+    enableSearch: enableSearch,
+    searchPlaceholder: searchPlaceholder,
+    enableViewModeToggle: enableViewModeToggle,
+    enableItemsPerPage: enableItemsPerPage,
+    itemsPerPageOptions: [5, 10, 20, 50]
+  }"
+  [searchTerm]="searchTerm"
+  [itemsPerPage]="itemsPerPage"
+  [viewMode]="viewMode"
+  (searchChange)="onSearchChange($event)"
+  (viewModeChange)="setViewMode($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)">
+</app-resource-filters>
+
 <app-empty-state *ngIf="!isLoading && !hasResources()" [config]="emptyStateConfig"></app-empty-state>
 
 <div *ngIf="!isLoading && hasResources()">
-  <app-resource-filters
-    [config]="{
-      enableSearch: enableSearch,
-      searchPlaceholder: searchPlaceholder,
-      enableViewModeToggle: enableViewModeToggle,
-      enableItemsPerPage: enableItemsPerPage,
-      itemsPerPageOptions: [5, 10, 20, 50]
-    }"
-    [searchTerm]="searchTerm"
-    [itemsPerPage]="itemsPerPage"
-    [viewMode]="viewMode"
-    (searchChange)="searchTerm = $event; filterResources()"
-    (viewModeChange)="setViewMode($event)"
-    (itemsPerPageChange)="onItemsPerPageChange($event)">
-  </app-resource-filters>
 
   <div *ngIf="viewMode === 'grid'" class="row">
     <div *ngFor="let cargo of paginatedResources" class="col-lg-4 col-md-6 mb-4">

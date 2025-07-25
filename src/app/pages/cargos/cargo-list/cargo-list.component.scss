@@ -4,6 +4,205 @@
   padding: 1.5rem;
 }
 
+.filters-modern {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e9ecef;
+
+    .filters-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.95rem;
+
+      i {
+        color: #6c757d;
+        font-size: 1.1rem;
+      }
+
+      .active-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1rem;
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          background: #28a745;
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        }
+
+        .count {
+          background: #28a745;
+          color: white;
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .filters-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .btn {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+
+        &.active {
+          background: #0d6efd;
+          border-color: #0d6efd;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .filters-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+
+    &.expanded {
+      max-height: 500px;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+
+      .filter-item {
+        .filter-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-weight: 500;
+          color: #495057;
+          font-size: 0.875rem;
+
+          i {
+            color: #6c757d;
+            font-size: 1rem;
+          }
+        }
+
+        .filter-input-wrapper {
+          position: relative;
+
+          .filter-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: #ffffff;
+
+            &:focus {
+              outline: none;
+              border-color: #0d6efd;
+              box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            }
+
+            &:hover {
+              border-color: #0d6efd;
+            }
+          }
+
+          .input-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 0.875rem;
+            pointer-events: none;
+          }
+        }
+      }
+    }
+
+    .filters-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+
+      .btn {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+.quick-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+
+    i {
+      color: #0d6efd;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .table td {
   vertical-align: middle;
 }
@@ -97,7 +296,6 @@
   }
 }
 
-// Estilos para visualização em lista
 .table {
   .bg-primary {
     background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%) !important;

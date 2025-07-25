@@ -24,4 +24,10 @@ export const NivelCargoLabels = {
     [NivelCargo.JUNIOR]: 'Júnior',
     [NivelCargo.PLENO]: 'Pleno',
     [NivelCargo.SENIOR]: 'Sênior'
-}; 
+};
+
+export interface CargoFilter {
+    nome?: string;
+    departamento?: string;
+    status?: string;
+} 
