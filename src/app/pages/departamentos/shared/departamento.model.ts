@@ -9,4 +9,8 @@ export class Departamento extends BaseResourceModel {
     static fromJson(jsonData: any): Departamento {
         return Object.assign(new Departamento(), jsonData);
     }
+}
+
+export interface DepartamentoFilter {
+    nome?: string;
 } 

@@ -52,7 +52,35 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
   }
 
   protected initializeComponent(): void {
-    this.viewMode = this.viewModeConfig.defaultMode;
+    this.viewMode = 'grid';
+  }
+
+  // Configuração de Estado Vazio
+  get emptyStateConfig(): EmptyStateConfig | undefined {
+    return undefined; // Deve ser sobrescrito pelos componentes filhos
+  }
+
+  // Configuração de Carregamento
+  get loadingConfig() {
+    return {
+      title: 'Carregando...',
+      description: 'Aguarde enquanto buscamos os dados'
+    };
+  }
+
+  // Configuração de Estatísticas
+  get statisticsConfig() {
+    return {
+      cards: []
+    };
+  }
+
+  // Configuração de Modo de Visualização
+  get viewModeConfig() {
+    return {
+      defaultMode: 'grid' as const,
+      enableToggle: true
+    };
   }
 
   // Configuração de Paginação
@@ -79,39 +107,6 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     };
   }
 
-  // Configuração de Modo de Visualização
-  get viewModeConfig() {
-    return {
-      defaultMode: 'grid' as const,
-      enableToggle: true
-    };
-  }
-
-  // Configuração de Estado Vazio
-  get emptyStateConfig(): EmptyStateConfig | undefined {
-    return undefined; // Deve ser sobrescrito pelos componentes filhos
-  }
-
-  // Configuração de Carregamento
-  get loadingConfig() {
-    return {
-      title: 'Carregando...',
-      description: 'Aguarde enquanto buscamos os dados'
-    };
-  }
-
-  // Configuração de Estatísticas
-  get statisticsConfig() {
-    return {
-      cards: []
-    };
-  }
-
-  // Configuração do Modal de Exclusão
-  get deleteModalConfig() {
-    return this.deleteModalService.config;
-  }
-
   // ========================================
   // MÉTODOS DE FUNCIONALIDADE
   // ========================================
@@ -129,16 +124,10 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
 
   // Busca
   filterResources(): void {
-    this.filteredResources = this.searchService.filterResources(
-      this.resources, 
-      this.matchesSearch.bind(this)
-    );
+    // Busca agora é feita no backend, não mais localmente
+    // Este método pode ser sobrescrito pelos componentes filhos
     this.paginationService.onPageChange(1);
     this.updatePagination();
-  }
-
-  matchesSearch(resource: T, searchTerm: string): boolean {
-    return this.getResourceDisplayName(resource).toLowerCase().includes(searchTerm.toLowerCase());
   }
 
   // Modo de Visualização
@@ -212,18 +201,6 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     return this.paginationService.config.options;
   }
 
-  get itemsPerPage(): number {
-    return this.paginationService.itemsPerPage;
-  }
-
-  get totalPages(): number {
-    return this.paginationService.totalPages;
-  }
-
-  get currentPage(): number {
-    return this.paginationService.currentPage;
-  }
-
   get enableSearch(): boolean {
     return this.searchService.config.enabled;
   }
@@ -234,6 +211,10 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
 
   get enableItemsPerPage(): boolean {
     return this.paginationConfig.enableItemsPerPage || false;
+  }
+
+  get itemsPerPage(): number {
+    return this.paginationService.itemsPerPage;
   }
 
   get searchPlaceholder(): string {
@@ -252,6 +233,10 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     return this.deleteModalService.deleting;
   }
 
+  get deleteModalConfig() {
+    return this.deleteModalService.config;
+  }
+
   get statisticsCards(): StatisticsCard[] {
     return this.statisticsConfig?.cards || [];
   }
@@ -260,7 +245,7 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
     this.isLoading = true;
     this.resourceService.getAll().subscribe({
       next: (resources) => {
-        this.resources = this.sortResources(resources);
+        this.resources = resources;
         this.filteredResources = [...this.resources];
         this.updatePagination();
         this.isLoading = false;
@@ -269,14 +254,6 @@ export abstract class BaseResourceListComponent<T extends BaseResourceModel> imp
         this.handleLoadError(error);
         this.isLoading = false;
       }
-    });
-  }
-
-  protected sortResources(resources: T[]): T[] {
-    return resources.sort((a, b) => {
-      const dateA = (a as any).createdAt ? new Date((a as any).createdAt).getTime() : 0;
-      const dateB = (b as any).createdAt ? new Date((b as any).createdAt).getTime() : 0;
-      return dateB - dateA;
     });
   }
 

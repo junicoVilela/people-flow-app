@@ -28,7 +28,7 @@
     [searchTerm]="searchTerm"
     [itemsPerPage]="itemsPerPage"
     [viewMode]="viewMode"
-    (searchChange)="searchTerm = $event; filterResources()"
+    (searchChange)="onSearchChange($event)"
     (viewModeChange)="setViewMode($event)"
     (itemsPerPageChange)="onItemsPerPageChange($event)">
   </app-resource-filters>

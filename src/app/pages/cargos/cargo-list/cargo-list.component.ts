@@ -154,8 +154,12 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
 
     private performSearch(searchTerm: string): void {
         const trimmedTerm = searchTerm.trim();
+        
+        if (trimmedTerm.length < 3 && trimmedTerm.length > 0) {
+            return;
+        }
 
-        if (!trimmedTerm || trimmedTerm.length < 3) {
+        if (!trimmedTerm) {
             this.loadResources();
             return;
         }

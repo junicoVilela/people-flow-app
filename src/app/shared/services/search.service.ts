@@ -27,13 +27,8 @@ export class SearchService {
         this._searchTerm = term;
     }
 
-    filterResources<T>(resources: T[], matchesSearchFn: (resource: T, searchTerm: string) => boolean): T[] {
-        if (!this._searchTerm.trim()) {
-            return [...resources];
-        } else {
-            return resources.filter(resource =>
-                matchesSearchFn(resource, this._searchTerm)
-            );
-        }
+    filterResources<T>(resources: T[]): T[] {
+        // Busca agora é feita no backend, retorna todos os recursos
+        return [...resources];
     }
 } 

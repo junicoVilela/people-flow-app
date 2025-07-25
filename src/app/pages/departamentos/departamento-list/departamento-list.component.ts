@@ -1,10 +1,12 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
-import { Departamento } from '../shared/departamento.model';
+import { Departamento, DepartamentoFilter } from '../shared/departamento.model';
 import { DepartamentoService } from '../shared/departamento.service';
 import { BaseResourceListComponent } from '../../../shared/components/base-resource-list/base-resource-list.component';
 import { PaginationService } from '../../../shared/services/pagination.service';
@@ -40,7 +42,10 @@ import { ConfirmDeleteModalComponent } from '../../../shared/components/confirm-
         ResourceFiltersComponent
     ]
 })
-export class DepartamentoListComponent extends BaseResourceListComponent<Departamento> {
+export class DepartamentoListComponent extends BaseResourceListComponent<Departamento> implements OnInit, OnDestroy {
+
+    private searchSubject = new Subject<string>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private departamentoService: DepartamentoService,
@@ -60,6 +65,59 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
             statisticsService,
             deleteModalService
         );
+    }
+
+    override ngOnInit(): void {
+        super.ngOnInit();
+
+        this.searchSubject.pipe(
+            debounceTime(500),
+            distinctUntilChanged(),
+            takeUntil(this.destroy$)
+        ).subscribe(searchTerm => {
+            this.performSearch(searchTerm);
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    private performSearch(searchTerm: string): void {
+        const trimmedTerm = searchTerm.trim();
+        
+        // Só realiza a busca se tiver 3 ou mais caracteres
+        if (trimmedTerm.length < 3 && trimmedTerm.length > 0) {
+            return;
+        }
+
+        this.isLoading = true;
+
+        const filter: DepartamentoFilter = {
+            nome: trimmedTerm
+        };
+
+        this.departamentoService.getAllWithFilters(
+            filter,
+            0,
+            this.paginationData.itemsPerPage
+        ).subscribe({
+            next: (response) => {
+                this.resources = response.content;
+                this.filteredResources = [...this.resources];
+                this.paginationData.totalItems = response.totalElements;
+                this.paginationData.totalPages = response.totalPages;
+                this.paginationData.currentPage = 1;
+                this.paginatedResources = this.paginationService.updatePagination(this.filteredResources);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Erro ao buscar departamentos:', error);
+                this.isLoading = false;
+                this.toastrService.error('Erro ao buscar departamentos');
+            }
+        });
     }
 
     public getResourceIcon(departamento: Departamento): string {
@@ -102,10 +160,14 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
         return 'Buscar departamentos...';
     }
 
-    override matchesSearch(departamento: Departamento, searchTerm: string): boolean {
-        return departamento.nome?.toLowerCase().includes(searchTerm) ||
-            departamento.descricao?.toLowerCase().includes(searchTerm) ||
-            false;
+    public onSearchChange(searchTerm: string): void {
+        this.searchService.searchTerm = searchTerm;
+        this.searchSubject.next(searchTerm);
+    }
+
+    override filterResources(): void {
+        const searchTerm = this.searchService.searchTerm;
+        this.searchSubject.next(searchTerm);
     }
 
     override get pageSubtitle(): string {
