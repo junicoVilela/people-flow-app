@@ -19,6 +19,7 @@ import { StatisticsCardsComponent } from '../../../shared/components/statistics-
 import { EmptyStateComponent, EmptyStateConfig } from '../../../shared/components/empty-state/empty-state.component';
 import { PageLoadingComponent } from '../../../shared/components/page-loading/page-loading.component';
 import { ResourceFiltersComponent } from '../../../shared/components/resource-filters/resource-filters.component';
+import { ConfirmDeleteModalComponent } from '../../../shared/components/confirm-delete-modal/confirm-delete-modal.component';
 
 @Component({
     selector: 'app-departamento-list',
@@ -31,6 +32,7 @@ import { ResourceFiltersComponent } from '../../../shared/components/resource-fi
         RouterLink,
         BreadCrumbComponent,
         PageHeaderComponent,
+        ConfirmDeleteModalComponent,
         PaginationComponent,
         StatisticsCardsComponent,
         EmptyStateComponent,

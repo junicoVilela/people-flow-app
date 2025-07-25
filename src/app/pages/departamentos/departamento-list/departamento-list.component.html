@@ -168,4 +168,15 @@
   [options]="paginationOptions"
   (pageChange)="onPageChange($event)"
   (itemsPerPageChange)="onItemsPerPageChange($event)">
-</app-pagination> 
+</app-pagination>
+
+<!-- Modal de Confirmação de Exclusão -->
+<app-confirm-delete-modal
+  [data]="modalData"
+  [isDeleting]="isDeleting"
+  [itemType]="deleteModalConfig.itemType"
+  [deleteButtonText]="deleteModalConfig.deleteButtonText"
+  [cancelButtonText]="deleteModalConfig.cancelButtonText"
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()">
+</app-confirm-delete-modal> 
