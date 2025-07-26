@@ -65,9 +65,7 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
         protected override paginationService: PaginationService,
         protected override searchService: SearchService,
         protected override statisticsService: StatisticsService,
-        protected override deleteModalService: DeleteModalService,
-        private router: Router,
-        private route: ActivatedRoute
+        protected override deleteModalService: DeleteModalService
     ) {
         super(
             cargoService,

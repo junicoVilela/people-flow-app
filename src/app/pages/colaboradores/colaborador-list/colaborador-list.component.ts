@@ -277,6 +277,12 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
                 iconColor: 'danger',
                 value: this.colaboradoresInativos,
                 label: 'Colaboradores Inativos'
+            },
+            {
+                icon: 'bi-person-plus',
+                iconColor: 'warning',
+                value: this.colaboradoresInativos,
+                label: 'Colaboradores de Férias'
             }
         ];
     }
