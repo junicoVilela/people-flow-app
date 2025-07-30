@@ -40,4 +40,9 @@ export class DepartamentoService extends BaseResourceService<Departamento> {
             })
         );
     }
+
+    getEstatisticas(): Observable<any> {
+        const url = `${environment.apiUrl}/${this.apiPath}/estatisticas`;
+        return this.http.get<any>(url);
+    }
 } 

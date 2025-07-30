@@ -54,6 +54,11 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
         status: ''
     };
     public mostrarFiltrosAvancados = false;
+    public statistics = {
+        total: 0,
+        ativos: 0,
+        inativos: 0
+    };
 
     private searchSubject = new Subject<string>();
     private destroy$ = new Subject<void>();
@@ -90,6 +95,29 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
         });
 
         this.mostrarFiltrosAvancados = false;
+        
+        // Carregar estatísticas do backend
+        this.carregarEstatisticas();
+    }
+
+    private carregarEstatisticas(): void {
+        this.cargoService.getEstatisticas().subscribe({
+            next: (estatisticas) => {
+                this.statistics = {
+                    total: estatisticas.total || 0,
+                    ativos: estatisticas.ativos || 0,
+                    inativos: estatisticas.inativos || 0
+                };
+            },
+            error: (error) => {
+                console.error('Erro ao carregar estatísticas:', error);
+                this.statistics = {
+                    total: this.resources.length,
+                    ativos: this.resources.filter(cargo => cargo.ativo).length,
+                    inativos: this.resources.filter(cargo => !cargo.ativo).length
+                };
+            }
+        });
     }
 
     ngOnDestroy(): void {
@@ -247,15 +275,15 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
     }
 
     get totalCargos(): number {
-        return this.resources.length;
+        return this.statistics.total;
     }
 
     get cargosAtivos(): number {
-        return this.resources.filter(cargo => cargo.ativo).length;
+        return this.statistics.ativos;
     }
 
     get cargosInativos(): number {
-        return this.resources.filter(cargo => !cargo.ativo).length;
+        return this.statistics.inativos;
     }
 
     override get statisticsCards(): StatisticsCard[] {

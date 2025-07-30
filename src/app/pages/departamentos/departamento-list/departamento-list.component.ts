@@ -44,6 +44,12 @@ import { ConfirmDeleteModalComponent } from '../../../shared/components/confirm-
 })
 export class DepartamentoListComponent extends BaseResourceListComponent<Departamento> implements OnInit, OnDestroy {
 
+    public statistics = {
+        total: 0,
+        ativos: 0,
+        inativos: 0
+    };
+
     private searchSubject = new Subject<string>();
     private destroy$ = new Subject<void>();
 
@@ -77,6 +83,9 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
         ).subscribe(searchTerm => {
             this.performSearch(searchTerm);
         });
+
+        // Carregar estatísticas do backend
+        this.carregarEstatisticas();
     }
 
     ngOnDestroy(): void {
@@ -87,7 +96,6 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
     private performSearch(searchTerm: string): void {
         const trimmedTerm = searchTerm.trim();
         
-        // Só realiza a busca se tiver 3 ou mais caracteres
         if (trimmedTerm.length < 3 && trimmedTerm.length > 0) {
             return;
         }
@@ -116,6 +124,27 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
                 console.error('Erro ao buscar departamentos:', error);
                 this.isLoading = false;
                 this.toastrService.error('Erro ao buscar departamentos');
+            }
+        });
+    }
+
+    private carregarEstatisticas(): void {
+        this.departamentoService.getEstatisticas().subscribe({
+            next: (estatisticas) => {
+                this.statistics = {
+                    total: estatisticas.total || 0,
+                    ativos: estatisticas.ativos || 0,
+                    inativos: estatisticas.inativos || 0
+                };
+            },
+            error: (error) => {
+                console.error('Erro ao carregar estatísticas:', error);
+                // Em caso de erro, usar valores baseados nos recursos carregados
+                this.statistics = {
+                    total: this.resources.length,
+                    ativos: this.resources.filter(departamento => departamento.ativo).length,
+                    inativos: this.resources.filter(departamento => !departamento.ativo).length
+                };
             }
         });
     }
@@ -175,15 +204,15 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
     }
 
     get totalDepartamentos(): number {
-        return this.resources.length;
+        return this.statistics.total;
     }
 
     get departamentosAtivos(): number {
-        return this.resources.filter(departamento => departamento.ativo).length;
+        return this.statistics.ativos;
     }
 
     get departamentosInativos(): number {
-        return this.resources.filter(departamento => !departamento.ativo).length;
+        return this.statistics.inativos;
     }
 
     override get statisticsCards(): StatisticsCard[] {
