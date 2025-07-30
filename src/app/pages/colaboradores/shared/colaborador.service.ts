@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseResourceService } from "../../../shared/services/base-resource.service";
@@ -12,6 +12,13 @@ export interface ColaboradorFilter {
   cargo?: string;
   departamento?: string;
   status?: string;
+}
+
+export interface ColaboradorStatistics {
+  total: number;
+  ativos: number;
+  desligados: number;
+  ferias: number;
 }
 
 @Injectable({
@@ -62,6 +69,26 @@ export class ColaboradorService extends BaseResourceService<Colaborador> {
     const url = `${environment.apiUrl}/${this.apiPath}/${id}/inativar`;
     return this.http.patch<void>(url, { dataDemissao }).pipe(
       map(() => void 0)
+    );
+  }
+
+  getQuantidadePorStatus(status: string): Observable<number> {
+    const url = `${environment.apiUrl}/${this.apiPath}/quantidade/${status}`;
+    return this.http.get<number>(url);
+  }
+
+  getStatistics(): Observable<ColaboradorStatistics> {
+    return forkJoin({
+      ativos: this.getQuantidadePorStatus('ATIVO'),
+      desligados: this.getQuantidadePorStatus('DESLIGADO'),
+      ferias: this.getQuantidadePorStatus('FERIAS')
+    }).pipe(
+      map(stats => ({
+        total: stats.ativos + stats.desligados + stats.ferias,
+        ativos: stats.ativos,
+        desligados: stats.desligados,
+        ferias: stats.ferias
+      }))
     );
   }
 } 

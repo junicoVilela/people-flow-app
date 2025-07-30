@@ -106,9 +106,9 @@
             [(ngModel)]="filtrosAvancados.status"
             (change)="aplicarFiltrosAvancados()">
             <option value="">Todos os status</option>
-            <option value="ATIVO">Ativo</option>
-            <option value="DESLIGADO">Desligado</option>
-            <option value="FERIAS">Férias</option>
+            <option [value]="StatusColaborador.ATIVO">Ativo</option>
+            <option [value]="StatusColaborador.DESLIGADO">Desligado</option>
+            <option [value]="StatusColaborador.FERIAS">Férias</option>
           </select>
           <i class="bi bi-chevron-down input-icon"></i>
         </div>
@@ -190,7 +190,7 @@
               </button>
             <button 
               class="btn btn-outline-warning rounded-circle d-flex align-items-center justify-content-center"
-              *ngIf="colaborador.status === 'ATIVO'"
+              *ngIf="colaborador.isAtivo"
               (click)="inativarColaborador(colaborador)"
               title="Inativar colaborador"
               style="width: 35px; height: 35px;"
@@ -213,7 +213,7 @@
           <p class="card-text text-muted mb-2">{{ colaborador.cargo }} - {{ colaborador.departamento }}</p>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="badge" 
-                  [ngClass]="colaborador.status === 'ATIVO' ? 'bg-success' : 'bg-danger'">
+                  [ngClass]="getStatusBadgeClass(colaborador)">
               {{ colaborador.status }}
             </span>
             <span class="text-muted small">
@@ -285,7 +285,7 @@
               <span class="text-muted">{{ formatResourceDate(colaborador.dataAdmissao) }}</span>
               <br>
               <span class="badge" 
-                    [ngClass]="colaborador.status === 'ATIVO' ? 'bg-success' : 'bg-danger'">
+                    [ngClass]="getStatusBadgeClass(colaborador)">
                 {{ colaborador.status }}
               </span>
             </td>
@@ -306,7 +306,7 @@
                 </button>
                 <button 
                   class="btn btn-outline-warning"
-                  *ngIf="colaborador.status === 'ATIVO'"
+                  *ngIf="colaborador.isAtivo"
                   (click)="inativarColaborador(colaborador)"
                   title="Inativar colaborador"
                 >

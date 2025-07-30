@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
-import { Colaborador } from '../shared/colaborador.model';
-import { ColaboradorFilter, ColaboradorService } from '../shared/colaborador.service';
+import { Colaborador, StatusColaborador } from '../shared/colaborador.model';
+import { ColaboradorFilter, ColaboradorService, ColaboradorStatistics } from '../shared/colaborador.service';
 import { BaseResourceListComponent } from '../../../shared/components/base-resource-list/base-resource-list.component';
 import { PaginationService } from '../../../shared/services/pagination.service';
 import { SearchService } from '../../../shared/services/search.service';
@@ -52,6 +52,13 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         status: ''
     };
     public mostrarFiltrosAvancados = false;
+    public statistics: ColaboradorStatistics = {
+        total: 0,
+        ativos: 0,
+        desligados: 0,
+        ferias: 0
+    };
+    public StatusColaborador = StatusColaborador; // Para usar no template
 
     private searchSubject = new Subject<string>();
     private destroy$ = new Subject<void>();
@@ -86,11 +93,25 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         ).subscribe(searchTerm => {
             this.performSearch(searchTerm);
         });
+
+        this.loadStatistics();
     }
 
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    private loadStatistics(): void {
+        this.colaboradorService.getStatistics().subscribe({
+            next: (stats) => {
+                this.statistics = stats;
+            },
+            error: (error) => {
+                console.error('Erro ao carregar estatísticas:', error);
+                this.toastrService.error('Erro ao carregar estatísticas dos colaboradores');
+            }
+        });
     }
 
     public aplicarFiltrosAvancados(): void {
@@ -246,53 +267,41 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
         return 'Gerencie os colaboradores da empresa';
     }
 
-    get totalColaboradores(): number {
-        return this.resources.length;
-    }
-
-    get colaboradoresAtivos(): number {
-        return this.resources.filter(colaborador => colaborador.status === 'ATIVO').length;
-    }
-
-    get colaboradoresInativos(): number {
-        return this.resources.filter(colaborador => colaborador.status === 'INATIVO').length;
-    }
-
     override get statisticsCards(): StatisticsCard[] {
         return [
             {
                 icon: 'bi-people',
                 iconColor: 'primary',
-                value: this.totalColaboradores,
+                value: this.statistics.total,
                 label: 'Total de Colaboradores'
             },
             {
                 icon: 'bi-person-check',
                 iconColor: 'success',
-                value: this.colaboradoresAtivos,
+                value: this.statistics.ativos,
                 label: 'Colaboradores Ativos'
             },
             {
                 icon: 'bi-person-x',
                 iconColor: 'danger',
-                value: this.colaboradoresInativos,
-                label: 'Colaboradores Inativos'
+                value: this.statistics.desligados,
+                label: 'Colaboradores Desligados'
             },
             {
-                icon: 'bi-person-plus',
+                icon: 'bi-person-badge',
                 iconColor: 'warning',
-                value: this.colaboradoresInativos,
+                value: this.statistics.ferias,
                 label: 'Colaboradores de Férias'
             }
         ];
     }
-
 
     inativarColaborador(colaborador: Colaborador) {
         const dataDemissao = new Date();
         this.colaboradorService.inativar(colaborador.id!, dataDemissao).subscribe({
             next: () => {
                 this.ngOnInit();
+                this.loadStatistics(); // Recarrega as estatísticas após inativar
                 this.toastrService.success('Colaborador inativado com sucesso!');
             },
             error: (error) => {
@@ -302,6 +311,21 @@ export class ColaboradorListComponent extends BaseResourceListComponent<Colabora
     }
 
     protected formatResourceDate(date: any): string {
-        return '';
+        if (!date) return '';
+        
+        try {
+            const dateObj = new Date(date);
+            if (isNaN(dateObj.getTime())) return '';
+            
+            return dateObj.toLocaleDateString('pt-BR');
+        } catch (error) {
+            return '';
+        }
+    }
+
+    public getStatusBadgeClass(colaborador: Colaborador): string {
+        if (colaborador.isAtivo) return 'bg-success';
+        if (colaborador.isFerias) return 'bg-warning';
+        return 'bg-danger';
     }
 } 
