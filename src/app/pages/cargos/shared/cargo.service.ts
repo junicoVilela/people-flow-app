@@ -47,8 +47,8 @@ export class CargoService extends BaseResourceService<Cargo> {
         );
     }
 
-    getEstatisticas(): Observable<any> {
-        const url = `${environment.apiUrl}/${this.apiPath}/estatisticas`;
-        return this.http.get<any>(url);
+    getQuantidadePorStatus(status: boolean): Observable<number> {
+        const url = `${environment.apiUrl}/${this.apiPath}/quantidade/${status}`;
+        return this.http.get<number>(url);
     }
 } 

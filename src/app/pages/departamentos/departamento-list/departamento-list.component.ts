@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 import { Departamento, DepartamentoFilter } from '../shared/departamento.model';
@@ -129,12 +129,15 @@ export class DepartamentoListComponent extends BaseResourceListComponent<Departa
     }
 
     private carregarEstatisticas(): void {
-        this.departamentoService.getEstatisticas().subscribe({
-            next: (estatisticas) => {
+        forkJoin({
+            ativos: this.departamentoService.getQuantidadePorStatus(true),
+            inativos: this.departamentoService.getQuantidadePorStatus(false)
+        }).subscribe({
+            next: (resultado) => {
                 this.statistics = {
-                    total: estatisticas.total || 0,
-                    ativos: estatisticas.ativos || 0,
-                    inativos: estatisticas.inativos || 0
+                    total: resultado.ativos + resultado.inativos,
+                    ativos: resultado.ativos,
+                    inativos: resultado.inativos
                 };
             },
             error: (error) => {

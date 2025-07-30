@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil, forkJoin } from 'rxjs';
 
 import { Cargo, NivelCargoLabels, CargoFilter } from '../shared/cargo.model';
 import { CargoService } from '../shared/cargo.service';
@@ -101,12 +101,15 @@ export class CargoListComponent extends BaseResourceListComponent<Cargo> impleme
     }
 
     private carregarEstatisticas(): void {
-        this.cargoService.getEstatisticas().subscribe({
-            next: (estatisticas) => {
+        forkJoin({
+            ativos: this.cargoService.getQuantidadePorStatus(true),
+            inativos: this.cargoService.getQuantidadePorStatus(false)
+        }).subscribe({
+            next: (resultado) => {
                 this.statistics = {
-                    total: estatisticas.total || 0,
-                    ativos: estatisticas.ativos || 0,
-                    inativos: estatisticas.inativos || 0
+                    total: resultado.ativos + resultado.inativos,
+                    ativos: resultado.ativos,
+                    inativos: resultado.inativos
                 };
             },
             error: (error) => {
