@@ -1,0 +1,375 @@
+.table th {
+  background-color: #f8f9fa;
+  border-top: none;
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-group .btn {
+  margin-right: 0.25rem;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+
+
+// Estilos minimalistas e modernos para os filtros
+.filters-modern {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e9ecef;
+
+    .filters-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.95rem;
+
+      i {
+        color: #6c757d;
+        font-size: 1.1rem;
+      }
+
+      .active-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1rem;
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          background: #28a745;
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        }
+
+        .count {
+          background: #28a745;
+          color: white;
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .filters-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .btn {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+
+        &.active {
+          background: #007bff;
+          color: white;
+          border-color: #007bff;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        i {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .filters-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+
+    &.expanded {
+      max-height: 500px;
+      padding: 1.5rem;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+
+      .filter-item {
+        .filter-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-weight: 500;
+          color: #495057;
+          font-size: 0.9rem;
+
+          i {
+            color: #6c757d;
+          }
+        }
+
+        .filter-input-wrapper {
+          position: relative;
+
+          .filter-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-right: 2.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+
+            &:focus {
+              outline: none;
+              border-color: #007bff;
+              box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+          }
+
+          .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 0.9rem;
+            pointer-events: none;
+          }
+        }
+      }
+    }
+
+    .filters-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// Estatísticas rápidas
+.quick-stats {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    i {
+      color: #007bff;
+      font-size: 0.9rem;
+    }
+
+    span {
+      color: #495057;
+    }
+  }
+}
+
+// Animação do indicador ativo
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .filters-modern {
+    .filters-header {
+      padding: 1rem;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+
+      .filters-title {
+        font-size: 0.9rem;
+      }
+
+      .filters-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    .filters-panel {
+      &.expanded {
+        padding: 1rem;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .filters-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  .quick-stats {
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .stat-item {
+      justify-content: center;
+    }
+  }
+}
+
+// Efeitos de foco melhorados
+.filter-input:focus + .input-icon {
+  color: #007bff;
+}
+
+// Transições suaves
+* {
+  transition: all 0.2s ease;
+}
+
+// Estados de hover
+.filters-modern:hover {
+  transform: translateY(-1px);
+}
+
+// Loading state
+.filters-modern.loading {
+  opacity: 0.7;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #007bff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Estilos para paginação
+.pagination-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  background: #ffffff;
+  border-top: 1px solid #e9ecef;
+  margin-top: 2rem;
+}
+
+// Garantir que o conteúdo ocupe toda a largura disponível
+.content-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+// Ajustes para cards e tabelas ocuparem 100% da largura
+.card, .table-responsive {
+  width: 100%;
+  max-width: 100%;
+}
+
+// Responsividade para ocupar 100% em diferentes telas
+@media (max-width: 1200px) {
+  .container-fluid {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 0 0.5rem;
+  }
+} 

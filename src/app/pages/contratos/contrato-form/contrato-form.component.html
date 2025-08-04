@@ -1,0 +1,185 @@
+<div class="container-fluid">
+  <app-page-header 
+    [page-title]="pageTitle" 
+    [show-button]="false"
+    [subtitle]="pageSubtitle">
+  </app-page-header>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="card-title">
+            <i class="bi bi-file-text me-2"></i>
+            {{ pageTitle }}
+          </h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="serverErrorMessages.length > 0" class="alert alert-danger">
+            <ul class="mb-0">
+              <li *ngFor="let message of serverErrorMessages">{{ message }}</li>
+            </ul>
+          </div>
+
+          <form [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+            <div class="row">
+              <div class="col-md-6">
+                <h5 class="mb-3">
+                  <i class="bi bi-person me-2"></i>
+                  Colaborador
+                </h5>
+                
+                <div class="form-group">
+                  <label for="colaboradorId">Colaborador *</label>
+                  <select 
+                    id="colaboradorId" 
+                    class="form-control" 
+                    formControlName="colaboradorId"
+                    (change)="onColaboradorChange()">
+                    <option value="">Selecione um colaborador</option>
+                    <option *ngFor="let colaborador of colaboradoresFiltrados" [value]="colaborador.id">
+                      {{ colaborador.nome }} - {{ colaborador.email }}
+                    </option>
+                  </select>
+                  <app-form-field-error [form-control]="$any(resourceForm.get('colaboradorId'))"></app-form-field-error>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <h5 class="mb-3">
+                  <i class="bi bi-file-text me-2"></i>
+                  Informações do Contrato
+                </h5>
+                
+                <div class="form-group">
+                  <label for="tipo">Tipo de Contrato *</label>
+                  <select id="tipo" class="form-control" formControlName="tipo">
+                    <option value="">Selecione o tipo</option>
+                    <option [value]="TipoContrato.CLT">CLT</option>
+                    <option [value]="TipoContrato.PJ">PJ</option>
+                    <option [value]="TipoContrato.ESTAGIO">Estágio</option>
+                    <option [value]="TipoContrato.TEMPORARIO">Temporário</option>
+                    <option [value]="TipoContrato.TERCEIRIZADO">Terceirizado</option>
+                  </select>
+                  <app-form-field-error [form-control]="$any(resourceForm.get('tipo'))"></app-form-field-error>
+                </div>
+
+                <div class="form-group">
+                  <label for="status">Status *</label>
+                  <select id="status" class="form-control" formControlName="status">
+                    <option value="">Selecione o status</option>
+                    <option [value]="StatusContrato.ATIVO">Ativo</option>
+                    <option [value]="StatusContrato.ENCERRADO">Encerrado</option>
+                  </select>
+                  <app-form-field-error [form-control]="$any(resourceForm.get('status'))"></app-form-field-error>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h5 class="mb-3">
+                  <i class="bi bi-calendar me-2"></i>
+                  Período do Contrato
+                </h5>
+                
+                <div class="form-group">
+                  <label for="dataInicio">Data de Início *</label>
+                  <input type="date" 
+                         id="dataInicio" 
+                         class="form-control" 
+                         formControlName="dataInicio">
+                  <app-form-field-error [form-control]="$any(resourceForm.get('dataInicio'))"></app-form-field-error>
+                </div>
+
+                <div class="form-group">
+                  <label for="dataFim">Data de Fim</label>
+                  <input type="date" 
+                         id="dataFim" 
+                         class="form-control" 
+                         formControlName="dataFim"
+                         [disabled]="resourceForm.get('dataFim')?.disabled || false">
+                  <app-form-field-error [form-control]="$any(resourceForm.get('dataFim'))"></app-form-field-error>
+                  <small class="form-text text-muted">
+                    Obrigatório apenas para contratos encerrados
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <h5 class="mb-3">
+                  <i class="bi bi-currency-dollar me-2"></i>
+                  Remuneração e Carga Horária
+                </h5>
+                
+                <div class="form-group">
+                  <label for="salario">Salário *</label>
+                  <input type="number" 
+                         id="salario" 
+                         class="form-control" 
+                         formControlName="salario"
+                         placeholder="Digite o salário"
+                         step="0.01"
+                         min="0">
+                  <app-form-field-error [form-control]="$any(resourceForm.get('salario'))"></app-form-field-error>
+                </div>
+
+                <div class="form-group">
+                  <label for="cargaHoraria">Carga Horária Semanal *</label>
+                  <input type="number" 
+                         id="cargaHoraria" 
+                         class="form-control" 
+                         formControlName="cargaHoraria"
+                         placeholder="40"
+                         min="1"
+                         max="168">
+                  <app-form-field-error [form-control]="$any(resourceForm.get('cargaHoraria'))"></app-form-field-error>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <h5 class="mb-3">
+                  <i class="bi bi-chat-text me-2"></i>
+                  Observações
+                </h5>
+                
+                <div class="form-group">
+                  <label for="observacoes">Observações</label>
+                  <textarea 
+                    id="observacoes" 
+                    class="form-control" 
+                    formControlName="observacoes"
+                    rows="3"
+                    placeholder="Informações adicionais sobre o contrato..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="form-group">
+                  <button type="submit" 
+                          class="btn btn-primary me-2"
+                          [disabled]="resourceForm.invalid || submittingForm">
+                    <i class="bi bi-check-circle me-1"></i>
+                    {{ currentAction === 'new' ? 'Cadastrar' : 'Atualizar' }}
+                  </button>
+                  <button type="button" 
+                          class="btn btn-secondary"
+                          routerLink="/contratos">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-page-loading *ngIf="submittingForm" [config]="loadingConfig"></app-page-loading> 

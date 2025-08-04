@@ -19,6 +19,10 @@ export const routes: Routes = [
                 loadChildren: () => import('./pages/departamentos/departamentos-routes').then(m => m.DEPARTAMENTOS_ROUTES),
             },
             {
+                path: 'contratos',
+                loadChildren: () => import('./pages/contratos/contratos-routes').then(m => m.CONTRATOS_ROUTES),
+            },
+            {
                 path: '',
                 redirectTo: '/colaboradores', pathMatch: 'full'
             }

@@ -137,13 +137,21 @@
 .content-container {
   // Adiciona um padding interno para o conteúdo apenas em páginas não-auth
   .router-outlet {
-    padding: 2rem;
+    padding: 1rem;
   }
   
   // Estilo para o conteúdo das páginas
   router-outlet + * {
     display: block;
     height: 100%;
+    width: 100%;
+  }
+  
+  // Garantir que a paginação ocupe 100% da largura
+  app-pagination {
+    width: 100%;
+    max-width: 100%;
+    display: block;
   }
 }
 
